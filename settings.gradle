@@ -1,2 +1,3 @@
-rootProject.name = 'carteira'
+rootProject.name = 'gerenciador-ativos-imobiliarios'
+include 'dominio'
 

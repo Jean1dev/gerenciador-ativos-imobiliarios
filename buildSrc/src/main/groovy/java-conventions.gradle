@@ -3,7 +3,6 @@ plugins {
     id 'jacoco'
 }
 
-group 'br.com.carteira'
 version '1.0-SNAPSHOT'
 
 repositories {
