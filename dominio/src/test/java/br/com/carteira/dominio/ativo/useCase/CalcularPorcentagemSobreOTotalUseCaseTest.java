@@ -5,10 +5,10 @@ import br.com.carteira.dominio.exception.DominioException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("CalcularPorcentagemSobreOTotal")
 class CalcularPorcentagemSobreOTotalUseCaseTest {
@@ -26,7 +26,7 @@ class CalcularPorcentagemSobreOTotalUseCaseTest {
         );
 
         var useCase = new CalcularPorcentagemSobreOTotalUseCase();
-        var resultado = useCase.calcular(petr4, new ArrayList<>());
+        var resultado = useCase.calcular(petr4, new HashSet<>());
         assertEquals(100, resultado);
 
         var klbn11 = new AcaoNacional(
@@ -47,7 +47,7 @@ class CalcularPorcentagemSobreOTotalUseCaseTest {
                 1
         );
 
-        resultado = useCase.calcular(petr4, List.of(vale3, klbn11));
+        resultado = useCase.calcular(petr4, Set.of(vale3, klbn11));
         assertEquals(5.9, resultado);
     }
 

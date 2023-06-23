@@ -2,13 +2,13 @@ package br.com.carteira.dominio.ativo.useCase;
 
 import br.com.carteira.dominio.ativo.Ativo;
 
-import java.util.List;
+import java.util.Set;
 
 import static br.com.carteira.dominio.Utils.arredondamentoPadrao;
 
 public final class CalcularPorcentagemSobreOTotalUseCase {
 
-    public double calcular(Ativo novoAtivo, List<Ativo> ativoList) {
+    public double calcular(Ativo novoAtivo, Set<Ativo> ativoList) {
         var totalAtivos = ativoList.stream()
                 .mapToDouble(value -> value.getValorAtual() * value.getQuantidade())
                 .sum();
