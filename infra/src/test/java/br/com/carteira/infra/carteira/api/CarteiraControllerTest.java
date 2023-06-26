@@ -5,6 +5,7 @@ import br.com.carteira.dominio.carteira.useCase.records.AtivoSimplificado;
 import br.com.carteira.dominio.carteira.useCase.records.CriarCarteiraInput;
 import br.com.carteira.dominio.metas.MetaDefinida;
 import br.com.carteira.infra.E2ETests;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -13,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -21,6 +23,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("Cateira test")
 class CarteiraControllerTest extends E2ETests {
+
+    @BeforeAll
+    public static void mongoIsUp() {
+        assertTrue(MONGO_CONTAINER.isRunning());
+    }
 
     @Test
     @DisplayName("deve criar uma carteira")
