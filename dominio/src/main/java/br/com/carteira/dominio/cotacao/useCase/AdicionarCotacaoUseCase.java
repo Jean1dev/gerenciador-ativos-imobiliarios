@@ -1,15 +1,15 @@
 package br.com.carteira.dominio.cotacao.useCase;
 
 import br.com.carteira.dominio.cotacao.Cotacao;
-import br.com.carteira.dominio.cotacao.CotacaoRepositoryGateway;
+import br.com.carteira.dominio.cotacao.CotacaoGateway;
 
 import java.util.Optional;
 
 public class AdicionarCotacaoUseCase {
 
-    private final CotacaoRepositoryGateway repositoryGateway;
+    private final CotacaoGateway repositoryGateway;
 
-    public AdicionarCotacaoUseCase(CotacaoRepositoryGateway repositoryGateway) {
+    public AdicionarCotacaoUseCase(CotacaoGateway repositoryGateway) {
         this.repositoryGateway = repositoryGateway;
     }
 

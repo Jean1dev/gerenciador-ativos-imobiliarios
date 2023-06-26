@@ -1,6 +1,6 @@
 package br.com.carteira.dominio.ativo.useCase;
 
-import br.com.carteira.dominio.TipoAtivo;
+import br.com.carteira.dominio.ativo.TipoAtivo;
 import br.com.carteira.dominio.ativo.AcaoNacional;
 import br.com.carteira.dominio.ativo.Ativo;
 import br.com.carteira.dominio.exception.DominioException;

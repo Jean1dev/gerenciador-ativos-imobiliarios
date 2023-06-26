@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: gerenciador-carteira-svc
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/carteira
+server:
+  port: ${PORT:8080}
