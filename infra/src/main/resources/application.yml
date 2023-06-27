@@ -4,6 +4,6 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://localhost:27017/carteira
+      uri: ${MONGO_URL:mongodb://localhost:27017/carteira}
 server:
   port: ${PORT:8080}
