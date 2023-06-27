@@ -1,6 +1,6 @@
 package br.com.carteira.dominio.metas;
 
-import br.com.carteira.dominio.TipoAtivo;
+import br.com.carteira.dominio.ativo.TipoAtivo;
 
 public class AtivoComPercentual {
     private double percentual;

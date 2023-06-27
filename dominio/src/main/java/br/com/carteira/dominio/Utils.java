@@ -16,6 +16,6 @@ public final class Utils {
     public static double arredondamentoPadrao(double valor) {
         var decimalFormat = new DecimalFormat("#.#");
         decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
-        return Double.parseDouble(decimalFormat.format(valor));
+        return Double.parseDouble(decimalFormat.format(valor).replace(",", "."));
     }
 }

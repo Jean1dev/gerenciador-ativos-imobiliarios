@@ -1,4 +1,6 @@
-package br.com.carteira.dominio;
+package br.com.carteira.dominio.ativo;
+
+import br.com.carteira.dominio.EnumDominio;
 
 public enum TipoAtivo implements EnumDominio {
     ACAO_NACIONAL("Ações Nacionais"),

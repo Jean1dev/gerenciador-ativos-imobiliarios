@@ -5,10 +5,10 @@ import br.com.carteira.dominio.exception.DominioException;
 
 import java.util.Objects;
 
-public class AcaoNacional extends Ativo {
+public class AcaoInternacional extends Ativo {
     private String ticker;
 
-    public AcaoNacional(
+    public AcaoInternacional(
             String ticker,
             double percentualRecomendado,
             double valorAtual,
@@ -16,12 +16,12 @@ public class AcaoNacional extends Ativo {
             double percentualTotal,
             double quantidade
     ) throws DominioException {
-        super(TipoAtivo.ACAO_NACIONAL, "B3", percentualRecomendado, valorAtual, nota, percentualTotal, quantidade);
+        super(TipoAtivo.ACAO_INTERNACIONAL, "NASDAQ", percentualRecomendado, valorAtual, nota, percentualTotal, quantidade);
         this.ticker = Objects.requireNonNull(ticker, "O ticker não pode ser nullo");
     }
 
-    public static AcaoNacional fromSimplificado(AtivoSimplificado ativoSimplificado) throws DominioException {
-        return new AcaoNacional(
+    public static AcaoInternacional fromSimplificado(AtivoSimplificado ativoSimplificado) throws DominioException {
+        return new AcaoInternacional(
                 ativoSimplificado.papel().toUpperCase(),
                 0,
                 0,

@@ -1,3 +1,4 @@
 rootProject.name = 'gerenciador-ativos-imobiliarios'
 include 'dominio'
+include 'infra'
 

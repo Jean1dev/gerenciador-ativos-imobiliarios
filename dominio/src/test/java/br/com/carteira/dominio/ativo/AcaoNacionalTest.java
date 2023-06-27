@@ -1,6 +1,5 @@
 package br.com.carteira.dominio.ativo;
 
-import br.com.carteira.dominio.TipoAtivo;
 import br.com.carteira.dominio.exception.DominioException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
