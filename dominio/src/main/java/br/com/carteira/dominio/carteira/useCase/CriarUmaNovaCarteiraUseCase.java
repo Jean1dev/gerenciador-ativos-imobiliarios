@@ -33,6 +33,11 @@ public class CriarUmaNovaCarteiraUseCase {
         } else if (Objects.nonNull(input.metaDefinida())) {
             switch (input.metaDefinida()) {
                 case META_DO_JEAN -> carteira.setMeta(Meta.metasDoJeanluca());
+                case CONSERVADOR -> carteira.setMeta(Meta.conservador());
+                case MODERADO -> carteira.setMeta(Meta.moderado());
+                case ARROJADO -> carteira.setMeta(Meta.arrojado());
+                case SOFISTICADO -> carteira.setMeta(Meta.sofisticado());
+                case DINAMICO -> carteira.setMeta(Meta.dinamico());
             }
 
         }
