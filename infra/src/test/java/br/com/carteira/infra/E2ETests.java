@@ -19,18 +19,10 @@ import org.testcontainers.utility.DockerImageName;
 @SpringBootTest(classes = Main.class)
 @ActiveProfiles("test")
 @Tag("e2e-test")
-public class E2ETests {
+public abstract class E2ETests {
 
     @Autowired
     protected MockMvc mvc;
     @Autowired
     protected ObjectMapper mapper;
-
-    @Container
-    public static MongoDBContainer MONGO_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:5"));
-
-    @DynamicPropertySource
-    static void mongoDbProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.mongodb.uri", MONGO_CONTAINER::getReplicaSetUrl);
-    }
 }
