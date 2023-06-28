@@ -31,6 +31,17 @@ public class AcaoInternacional extends Ativo {
         );
     }
 
+    public static AcaoInternacional fromParent(String ticker, Ativo ativo) {
+        return new AcaoInternacional(
+                ticker,
+                ativo.getPercentualRecomendado(),
+                ativo.getValorAtual(),
+                ativo.getNota(),
+                ativo.getPercentualTotal(),
+                ativo.getQuantidade()
+        );
+    }
+
     public String getTicker() {
         return ticker;
     }

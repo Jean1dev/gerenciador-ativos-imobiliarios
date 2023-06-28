@@ -5,14 +5,15 @@ import br.com.carteira.dominio.metas.MetaDefinida;
 
 import java.util.Collection;
 
-public record CriarCarteiraInput(
+public record CriarOuAtualizarCarteiraInput(
         String nome,
         Meta meta,
         Collection<AtivoSimplificado> ativos,
-        MetaDefinida metaDefinida
+        MetaDefinida metaDefinida,
+        String identificacaoCarteiraJaCriada
 ) {
-    public static CriarCarteiraInput byName(String nome) {
-        return new CriarCarteiraInput(nome, null, null, null);
+    public static CriarOuAtualizarCarteiraInput byName(String nome) {
+        return new CriarOuAtualizarCarteiraInput(nome, null, null, null, null);
     }
 
 }

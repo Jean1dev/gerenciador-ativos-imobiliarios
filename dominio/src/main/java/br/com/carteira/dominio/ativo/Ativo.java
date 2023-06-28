@@ -1,8 +1,13 @@
 package br.com.carteira.dominio.ativo;
 
+import br.com.carteira.dominio.carteira.useCase.records.AtivoSimplificado;
 import br.com.carteira.dominio.exception.DominioException;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static br.com.carteira.dominio.Utils.nullOrValue;
 
@@ -20,7 +25,7 @@ public abstract class Ativo {
             String localAlocado,
             double percentualRecomendado,
             double valorAtual,
-            Integer nota,
+            int nota,
             double percentualTotal,
             double quantidade
     ) throws DominioException {
@@ -32,6 +37,34 @@ public abstract class Ativo {
         this.percentualTotal = (double) nullOrValue(percentualTotal, 0.0);
         this.quantidade = (double) nullOrValue(quantidade, 0.0);
         validar();
+    }
+
+    public static Set<Ativo> ativoSimplificadosToAtivo(Collection<AtivoSimplificado> ativos) {
+        if (Objects.isNull(ativos)) {
+            return Collections.emptySet();
+        }
+
+        return ativos.stream().map(ativoSimplificado ->
+                switch (ativoSimplificado.tipoAtivo()) {
+                    case ACAO_NACIONAL -> {
+                        yield AcaoNacional.fromSimplificado(ativoSimplificado);
+                    }
+                    case ACAO_INTERNACIONAL -> {
+                        yield AcaoInternacional.fromSimplificado(ativoSimplificado);
+                    }
+                    case REITs -> null;
+                    case FII -> null;
+                    case CRYPTO -> null;
+                    case RENDA_FIXA -> new RendaFixa(
+                            ativoSimplificado.tipoAtivo(),
+                            null,
+                            0,
+                            0,
+                            ativoSimplificado.nota(),
+                            0,
+                            ativoSimplificado.quantidade()
+                    );
+                }).collect(Collectors.toUnmodifiableSet());
     }
 
     public void validar() throws DominioException {

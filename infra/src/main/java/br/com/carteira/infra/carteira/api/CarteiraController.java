@@ -1,6 +1,6 @@
 package br.com.carteira.infra.carteira.api;
 
-import br.com.carteira.dominio.carteira.useCase.records.CriarCarteiraInput;
+import br.com.carteira.dominio.carteira.useCase.records.CriarOuAtualizarCarteiraInput;
 import br.com.carteira.dominio.metas.AtivoComPercentual;
 import br.com.carteira.dominio.metas.Meta;
 import br.com.carteira.dominio.metas.MetaDefinida;
@@ -22,8 +22,19 @@ public class CarteiraController {
     }
 
     @PostMapping
-    public void criarCarteira(@RequestBody CriarCarteiraInput input) {
-        service.criarOuAtualizar(input);
+    public void criarCarteira(@RequestBody CriarOuAtualizarCarteiraInput input) {
+        service.upsertCarteira(input);
+    }
+
+    @PutMapping("{id}")
+    public void atualizarCarteira(@PathVariable("id") String id, @RequestBody CriarOuAtualizarCarteiraInput input) {
+        service.upsertCarteira(new CriarOuAtualizarCarteiraInput(
+                input.nome(),
+                input.meta(),
+                input.ativos(),
+                input.metaDefinida(),
+                id
+        ));
     }
 
     @GetMapping

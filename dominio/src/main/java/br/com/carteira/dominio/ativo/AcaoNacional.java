@@ -20,6 +20,17 @@ public class AcaoNacional extends Ativo {
         this.ticker = Objects.requireNonNull(ticker, "O ticker não pode ser nullo");
     }
 
+    public static AcaoNacional fromParent(String ticker, Ativo parent) {
+        return new AcaoNacional(
+                ticker,
+                parent.getPercentualRecomendado(),
+                parent.getValorAtual(),
+                parent.getNota(),
+                parent.getPercentualTotal(),
+                parent.getQuantidade()
+        );
+    }
+
     public static AcaoNacional fromSimplificado(AtivoSimplificado ativoSimplificado) throws DominioException {
         return new AcaoNacional(
                 ativoSimplificado.papel().toUpperCase(),

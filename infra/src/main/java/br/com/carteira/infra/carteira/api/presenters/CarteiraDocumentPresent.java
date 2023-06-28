@@ -21,7 +21,7 @@ public class CarteiraDocumentPresent implements Serializable {
         return new CarteiraDocumentPresent(
                 document.getId(),
                 document.getNome(),
-                document.getAtivosRef().size());
+                document.getQuantidadeAtivos());
     }
 
     public static List<CarteiraDocumentPresent> present(final List<CarteiraDocument> documents) {

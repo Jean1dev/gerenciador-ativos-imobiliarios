@@ -1,11 +1,11 @@
 package br.com.carteira.infra.carteira.mongodb;
 
+import br.com.carteira.dominio.carteira.Carteira;
 import br.com.carteira.dominio.metas.Meta;
-import br.com.carteira.infra.ativo.mongodb.AtivosDocument;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Set;
+import java.util.Collections;
 
 @Document("carteira")
 public class CarteiraDocument {
@@ -13,15 +13,25 @@ public class CarteiraDocument {
     private String id;
     private String nome;
     private Meta meta;
-    private Set<AtivosDocument> ativosRef;
     private String usuarioRef;
+    private int quantidadeAtivos;
 
-    public CarteiraDocument(String id, String nome, Meta meta, Set<AtivosDocument> ativosRef, String usuarioRef) {
+    public CarteiraDocument(String id, String nome, Meta meta, String usuarioRef, int quantidadeAtivos) {
         this.id = id;
         this.nome = nome;
         this.meta = meta;
-        this.ativosRef = ativosRef;
         this.usuarioRef = usuarioRef;
+        this.quantidadeAtivos = quantidadeAtivos;
+    }
+
+    public static Carteira fromDocument(CarteiraDocument carteiraDocument) {
+        var carteira = new Carteira();
+        carteira.setIdentificacao(carteiraDocument.getId());
+        carteira.setNome(carteira.getNome());
+        carteira.setMeta(carteiraDocument.getMeta());
+        carteira.setAtivos(Collections.emptySet());
+        carteira.setQuantidadeAtivos(carteiraDocument.getQuantidadeAtivos());
+        return carteira;
     }
 
     public String getId() {
@@ -36,11 +46,11 @@ public class CarteiraDocument {
         return meta;
     }
 
-    public Set<AtivosDocument> getAtivosRef() {
-        return ativosRef;
-    }
-
     public String getUsuarioRef() {
         return usuarioRef;
+    }
+
+    public int getQuantidadeAtivos() {
+        return quantidadeAtivos;
     }
 }

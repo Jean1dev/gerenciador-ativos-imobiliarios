@@ -1,6 +1,6 @@
 package br.com.carteira.infra.carteira.config;
 
-import br.com.carteira.dominio.carteira.useCase.CriarUmaNovaCarteiraUseCase;
+import br.com.carteira.dominio.carteira.useCase.CriarEAtualizarCarteiraUserCase;
 import br.com.carteira.infra.carteira.component.DefaultCarteiraGateway;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +15,7 @@ public class CarteiraConfiguration {
     }
 
     @Bean
-    public CriarUmaNovaCarteiraUseCase criarUmaNovaCarteiraUseCase() {
-        return new CriarUmaNovaCarteiraUseCase(defaultCarteiraGateway);
+    public CriarEAtualizarCarteiraUserCase criarUmaNovaCarteiraUseCase() {
+        return new CriarEAtualizarCarteiraUserCase(defaultCarteiraGateway);
     }
 }
