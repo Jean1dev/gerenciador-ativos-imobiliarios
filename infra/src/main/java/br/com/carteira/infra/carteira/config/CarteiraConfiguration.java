@@ -8,14 +8,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CarteiraConfiguration {
 
-    private final DefaultCarteiraGateway defaultCarteiraGateway;
-
-    public CarteiraConfiguration(DefaultCarteiraGateway defaultCarteiraGateway) {
-        this.defaultCarteiraGateway = defaultCarteiraGateway;
-    }
-
     @Bean
-    public CriarEAtualizarCarteiraUserCase criarUmaNovaCarteiraUseCase() {
+    public CriarEAtualizarCarteiraUserCase criarUmaNovaCarteiraUseCase(DefaultCarteiraGateway defaultCarteiraGateway) {
         return new CriarEAtualizarCarteiraUserCase(defaultCarteiraGateway);
     }
 }

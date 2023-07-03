@@ -1,5 +1,6 @@
 package br.com.carteira.infra.exceptions;
 
+import br.com.carteira.dominio.exception.DominioException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -21,6 +22,11 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         );
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DominioException.class)
+    public final ResponseEntity<ErrorResponse> dominioException(DominioException ex, WebRequest req) {
+        return defaultHanlder(ex, req);
     }
 
     @ExceptionHandler(ApplicationException.class)

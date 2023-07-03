@@ -1,9 +1,10 @@
 package br.com.carteira.infra.ativo.api;
 
 import br.com.carteira.dominio.ativo.TipoAtivo;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import br.com.carteira.dominio.ativo.useCase.GestaoAtivosUseCase;
+import br.com.carteira.dominio.ativo.useCase.records.AdicionarAtivoInput;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -11,6 +12,14 @@ import java.util.Map;
 @RestController
 @RequestMapping(path = "ativo")
 public class AtivoController {
+
+    @Autowired
+    public GestaoAtivosUseCase gestaoAtivosUseCase;
+
+    @PostMapping("add-ativo")
+    public void addAtivo(@RequestBody AdicionarAtivoInput body) {
+        gestaoAtivosUseCase.adicionar(body);
+    }
 
     @GetMapping("tipo-ativos")
     public Map getTipoAtivos() {

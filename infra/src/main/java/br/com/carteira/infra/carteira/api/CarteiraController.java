@@ -4,6 +4,7 @@ import br.com.carteira.dominio.carteira.useCase.records.CriarOuAtualizarCarteira
 import br.com.carteira.dominio.metas.AtivoComPercentual;
 import br.com.carteira.dominio.metas.Meta;
 import br.com.carteira.dominio.metas.MetaDefinida;
+import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuarios;
 import br.com.carteira.infra.carteira.api.presenters.CarteiraDocumentPresent;
 import br.com.carteira.infra.carteira.service.CarteiraService;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,16 @@ public class CarteiraController {
 
     public CarteiraController(CarteiraService service) {
         this.service = service;
+    }
+
+    @PostMapping("consolidar/{carteira}")
+    public void consolidar(@PathVariable("carteira") String carteiraId) {
+        service.consolidar(carteiraId);
+    }
+
+    @GetMapping("meus-ativos/{carteira}")
+    public List<AtivoDosUsuarios> meusAtivos(@PathVariable("carteira") String carteiraRef) {
+        return service.meusAtivos(carteiraRef);
     }
 
     @PostMapping
