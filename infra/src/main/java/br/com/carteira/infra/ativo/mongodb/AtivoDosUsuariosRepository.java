@@ -9,4 +9,6 @@ public interface AtivoDosUsuariosRepository extends MongoRepository<AtivoDosUsua
     Optional<AtivoDosUsuarios> findByCarteiraRefAndTicker(String carteiraRef, String ticker);
 
     List<AtivoDosUsuarios> findAllByCarteiraRef(String carteiraRef);
+
+    void deleteAllByCarteiraRef(String carteiraRef);
 }

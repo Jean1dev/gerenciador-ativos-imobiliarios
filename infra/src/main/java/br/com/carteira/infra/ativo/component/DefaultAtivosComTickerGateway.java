@@ -5,6 +5,7 @@ import br.com.carteira.dominio.ativo.AtivosComTickerGateway;
 import br.com.carteira.dominio.ativo.TipoAtivo;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacao;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacaoRepository;
+import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuariosRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -13,9 +14,11 @@ import java.util.Optional;
 public class DefaultAtivosComTickerGateway implements AtivosComTickerGateway {
 
     private final AtivoComCotacaoRepository ativoComCotacaoRepository;
+    private final AtivoDosUsuariosRepository ativoDosUsuariosRepository;
 
-    public DefaultAtivosComTickerGateway(AtivoComCotacaoRepository ativoComCotacaoRepository) {
+    public DefaultAtivosComTickerGateway(AtivoComCotacaoRepository ativoComCotacaoRepository, AtivoDosUsuariosRepository ativoDosUsuariosRepository) {
         this.ativoComCotacaoRepository = ativoComCotacaoRepository;
+        this.ativoDosUsuariosRepository = ativoDosUsuariosRepository;
     }
 
     @Override
@@ -30,5 +33,13 @@ public class DefaultAtivosComTickerGateway implements AtivosComTickerGateway {
     @Override
     public void adicionarParaMonitoramento(String ticker, TipoAtivo tipoAtivo) {
         ativoComCotacaoRepository.save(AtivoComCotacao.criarCotacao(ticker, tipoAtivo));
+    }
+
+    @Override
+    public void atualizarAtivo(String ativoId, Integer nota, Double quantidade) {
+        var ativoDosUsuarios = ativoDosUsuariosRepository.findById(ativoId).orElseThrow();
+        ativoDosUsuarios.setNota(nota);
+        ativoDosUsuarios.setQuantidade(quantidade);
+        ativoDosUsuariosRepository.save(ativoDosUsuarios);
     }
 }

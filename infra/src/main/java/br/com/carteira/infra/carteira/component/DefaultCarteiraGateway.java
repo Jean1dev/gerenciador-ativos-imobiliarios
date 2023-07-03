@@ -40,6 +40,17 @@ public class DefaultCarteiraGateway implements CarteiraGateway {
     }
 
     @Override
+    public Carteira buscarCarteiraPeloAtivo(String ativoIdentificacao) {
+        return ativoDosUsuariosRepository.findById(ativoIdentificacao)
+                .map(AtivoDosUsuarios::getCarteiraRef)
+                .map(carteraId -> {
+                    return carteiraRepository.findById(carteraId)
+                            .map(CarteiraDocument::simplificadoFromDocument)
+                            .orElseThrow();
+                }).orElseThrow();
+    }
+
+    @Override
     public Carteira salvar(Carteira carteira) {
         Usuario usuario = usuarioService.getUsuario(holder.getUserName(), holder.getEmail());
         log.info("Usuario localizado " + usuario.getName());
@@ -89,5 +100,10 @@ public class DefaultCarteiraGateway implements CarteiraGateway {
                 ativoSimplificado.quantidade(),
                 ativoSimplificado.papel()
         ));
+    }
+
+    @Override
+    public void deletarAtivo(String ativoIdentificacao) {
+        ativoDosUsuariosRepository.deleteById(ativoIdentificacao);
     }
 }

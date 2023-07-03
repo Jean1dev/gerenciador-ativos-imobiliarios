@@ -3,6 +3,7 @@ package br.com.carteira.dominio.ativo.useCase;
 import br.com.carteira.dominio.ativo.AtivosComTickerGateway;
 import br.com.carteira.dominio.ativo.TipoAtivo;
 import br.com.carteira.dominio.ativo.useCase.records.AdicionarAtivoInput;
+import br.com.carteira.dominio.ativo.useCase.records.AtualizarAtivoInput;
 import br.com.carteira.dominio.carteira.Carteira;
 import br.com.carteira.dominio.carteira.CarteiraGateway;
 import br.com.carteira.dominio.carteira.useCase.records.AtivoSimplificado;
@@ -21,14 +22,30 @@ public class GestaoAtivosUseCase {
         this.ativosComTickerGateway = ativosComTickerGateway;
     }
 
+    public void atualizarAtivo(AtualizarAtivoInput input) {
+        ativosComTickerGateway.atualizarAtivo(input.identificacao(), input.nota(), input.quantidade());
+        carteiraGateway.consolidar(carteiraGateway.buscarCarteiraPeloAtivo(input.identificacao()));
+    }
+
+    public void removerAtivo(String identificacao) {
+        var carteira = carteiraGateway.buscarCarteiraPeloAtivo(identificacao);
+        carteira.setQuantidadeAtivos(carteira.getQuantidadeAtivos() - 1);
+        carteiraGateway.salvar(carteira);
+        carteiraGateway.deletarAtivo(identificacao);
+    }
+
     public void adicionar(AdicionarAtivoInput input) {
         Objects.requireNonNull(input.tipoAtivo(), "Tipo ativo não pode ser null");
         Carteira carteira = carteiraGateway.buscarCarteiraPeloId(input.identificacaoCarteira());
         if (isAtivoComticker(input)) {
             adicionarAtivoComTicker(carteira, input.tipoAtivo(), input.nome(), input.quantidade(), input.nota());
+            carteira.setQuantidadeAtivos(carteira.getQuantidadeAtivos() + 1);
+            carteiraGateway.salvar(carteira);
             return;
         }
 
+        carteira.setQuantidadeAtivos(carteira.getQuantidadeAtivos() + 1);
+        carteiraGateway.salvar(carteira);
         carteiraGateway.adicionarAtivoNaCarteira(carteira,
                 new AtivoSimplificado(
                         input.tipoAtivo(),

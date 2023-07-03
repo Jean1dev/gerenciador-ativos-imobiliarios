@@ -45,6 +45,11 @@ public class CarteiraService {
         publisher.publishEvent(carteira);
     }
 
+    public void deletarCarteira(String carteiraId) {
+        carteiraRepository.deleteById(carteiraId);
+        ativoDosUsuariosRepository.deleteAllByCarteiraRef(carteiraId);
+    }
+
     public List<AtivoDosUsuarios> meusAtivos(String carteiraRef) {
         return ativoDosUsuariosRepository.findAllByCarteiraRef(carteiraRef);
     }

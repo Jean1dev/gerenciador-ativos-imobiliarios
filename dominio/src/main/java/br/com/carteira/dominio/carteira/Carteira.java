@@ -23,21 +23,14 @@ public class Carteira {
     }
 
     public Set<Ativo> removeByTicker(String ticker) {
-        var ativoEncontrado = ativos.stream().filter(ativo -> {
-                    if (this.verificarAcaoNacional(ativo) || verificarAcaoInternacional(ativo))
+        return ativos.stream().filter(ativo -> {
+                    if (this.verificarAtivoComTicker(ativo))
                         return true;
                     else
                         return false;
-                }).map(ativo -> (AcaoNacional) ativo)
-                .filter(acaoNacional -> acaoNacional.getTicker().equals(ticker))
-                .findFirst()
-                .orElseThrow(() -> new DominioException("Ticker nao esta nessa carteira"));
-
-        boolean remove = ativos.remove(ativoEncontrado);
-        if (remove)
-            return ativos;
-        else
-            throw new DominioException("Não foi possivel remver esse ativo");
+                }).map(ativo -> (AtivoComTicker) ativo)
+                .filter(ativoComTicker -> !ativoComTicker.getTicker().equals(ticker))
+                .collect(Collectors.toSet());
     }
 
     public Set<AtivoComTicker> getAtivosComTicker() {

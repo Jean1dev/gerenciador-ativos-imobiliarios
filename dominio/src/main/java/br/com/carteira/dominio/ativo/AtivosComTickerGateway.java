@@ -7,4 +7,6 @@ public interface AtivosComTickerGateway {
     Optional<Ativo> buscarPeloTicker(String ticker);
 
     void adicionarParaMonitoramento(String ticker, TipoAtivo tipoAtivo);
+
+    void atualizarAtivo(String ativoId, Integer nota, Double quantidade);
 }

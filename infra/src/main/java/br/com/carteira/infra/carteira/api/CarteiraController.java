@@ -27,6 +27,11 @@ public class CarteiraController {
         service.consolidar(carteiraId);
     }
 
+    @DeleteMapping("{carteira}")
+    public void delete(@PathVariable("carteira") String carteiraId) {
+        service.deletarCarteira(carteiraId);
+    }
+
     @GetMapping("meus-ativos/{carteira}")
     public List<AtivoDosUsuarios> meusAtivos(@PathVariable("carteira") String carteiraRef) {
         return service.meusAtivos(carteiraRef);

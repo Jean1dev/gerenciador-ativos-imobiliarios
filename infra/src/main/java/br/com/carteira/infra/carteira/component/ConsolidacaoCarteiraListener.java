@@ -98,7 +98,7 @@ public class ConsolidacaoCarteiraListener {
 
         var ativoComTicker = AtivoDosUsuarios.toAtivoComTicker(ativoDosUsuarios);
         var porcentagemSobreTotal = new CalcularPorcentagemSobreOTotalUseCase().calcular(ativoComTicker, carteira.getAtivos());
-        var valorRecomendado = new CalcularValorRecomendadoUseCase().calcular(ativoComTicker, carteira.getAtivos());
+        var valorRecomendado = new CalcularValorRecomendadoUseCase().calcular(ativoComTicker, carteira.removeByTicker(ativoComTicker.getTicker()));
 
         ativoDosUsuarios.setPercentualTotal(porcentagemSobreTotal);
         ativoDosUsuarios.setValorRecomendado(valorRecomendado);

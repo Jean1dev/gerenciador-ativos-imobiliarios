@@ -57,6 +57,14 @@ public class AtivoDosUsuarios {
         );
     }
 
+    public void setNota(int nota) {
+        this.nota = nota;
+    }
+
+    public void setQuantidade(double quantidade) {
+        this.quantidade = quantidade;
+    }
+
     public void setPercentualTotal(double percentualTotal) {
         this.percentualTotal = percentualTotal;
     }
