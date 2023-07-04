@@ -71,7 +71,7 @@ class AtivoControllerTest extends E2ETests {
     @Test
     @DisplayName("deve remover um ativo da carteira")
     public void deveRemover() throws Exception {
-        var idCarteira = carteiraRepository.save(new CarteiraDocument(null, "teste", null, null, 0)).getId();
+        var idCarteira = carteiraRepository.save(new CarteiraDocument(null, "teste2", null, null, 1)).getId();
         var stringTicker = ativoDosUsuariosRepository.save(new AtivoDosUsuarios(
                 null,
                 idCarteira,

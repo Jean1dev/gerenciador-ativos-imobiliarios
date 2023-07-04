@@ -40,7 +40,7 @@ public class AtualizarCotacaoAtivos {
 
             return false;
         }).forEach(ativoComCotacao -> {
-            var cotacao = bmfBovespa.getCotacao(ativoComCotacao.getTicker());
+            var cotacao = bmfBovespa.getCotacao(ativoComCotacao.getTicker() + ".SAO");
             if (cotacao != null) {
                 log.info(String.format("atualizando %s para %s", ativoComCotacao.getTicker(), cotacao.valor()));
                 ativoComCotacao.atualizarValor(cotacao.valor());
