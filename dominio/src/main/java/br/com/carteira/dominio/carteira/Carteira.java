@@ -3,6 +3,7 @@ package br.com.carteira.dominio.carteira;
 import br.com.carteira.dominio.ativo.AcaoInternacional;
 import br.com.carteira.dominio.ativo.AcaoNacional;
 import br.com.carteira.dominio.ativo.Ativo;
+import br.com.carteira.dominio.ativo.AtivoComTicker;
 import br.com.carteira.dominio.exception.DominioException;
 import br.com.carteira.dominio.metas.Meta;
 
@@ -21,9 +22,45 @@ public class Carteira {
     public Carteira() {
     }
 
+    public Set<Ativo> removeByTicker(String ticker) {
+        return ativos.stream().filter(ativo -> {
+                    if (this.verificarAtivoComTicker(ativo))
+                        return true;
+                    else
+                        return false;
+                }).map(ativo -> (AtivoComTicker) ativo)
+                .filter(ativoComTicker -> !ativoComTicker.getTicker().equals(ticker))
+                .collect(Collectors.toSet());
+    }
+
+    public Set<AtivoComTicker> getAtivosComTicker() {
+        return ativos.stream()
+                .filter(this::verificarAtivoComTicker)
+                .map(ativo -> {
+                    AtivoComTicker a = (AtivoComTicker) ativo;
+                    return AtivoComTicker.fromParent(a.getTicker(), ativo);
+                }).collect(Collectors.toUnmodifiableSet());
+    }
+
+    private boolean verificarAtivoComTicker(Ativo ativo) {
+        try {
+            AtivoComTicker a = (AtivoComTicker) ativo;
+            return Objects.nonNull(a.getTicker());
+        } catch (ClassCastException classCastException) {
+            return false;
+        }
+    }
+
     public AcaoNacional getAcaoNacionalByTicker(String ticker) {
         return (AcaoNacional) ativos.stream()
                 .filter(this::verificarAcaoNacional)
+                .findFirst()
+                .orElseThrow(() -> new DominioException("Não existe essa ação na carteira"));
+    }
+
+    public AtivoComTicker getAtivoByTicker(String ticker) {
+        return (AtivoComTicker) ativos.stream()
+                .filter(this::verificarAtivoComTicker)
                 .findFirst()
                 .orElseThrow(() -> new DominioException("Não existe essa ação na carteira"));
     }

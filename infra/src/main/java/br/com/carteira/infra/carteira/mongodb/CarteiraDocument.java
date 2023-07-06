@@ -24,10 +24,10 @@ public class CarteiraDocument {
         this.quantidadeAtivos = quantidadeAtivos;
     }
 
-    public static Carteira fromDocument(CarteiraDocument carteiraDocument) {
+    public static Carteira simplificadoFromDocument(CarteiraDocument carteiraDocument) {
         var carteira = new Carteira();
         carteira.setIdentificacao(carteiraDocument.getId());
-        carteira.setNome(carteira.getNome());
+        carteira.setNome(carteiraDocument.getNome());
         carteira.setMeta(carteiraDocument.getMeta());
         carteira.setAtivos(Collections.emptySet());
         carteira.setQuantidadeAtivos(carteiraDocument.getQuantidadeAtivos());

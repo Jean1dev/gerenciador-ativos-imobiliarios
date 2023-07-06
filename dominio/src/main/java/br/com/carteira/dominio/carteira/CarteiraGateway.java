@@ -1,10 +1,20 @@
 package br.com.carteira.dominio.carteira;
 
+import br.com.carteira.dominio.carteira.useCase.records.AtivoSimplificado;
+
 public interface CarteiraGateway {
+
+    Carteira buscarCarteiraPeloAtivo(String ativoIdentificacao);
 
     Carteira salvar(Carteira carteira);
 
     void consolidar(Carteira carteira);
 
     Carteira buscarCarteiraPeloId(String id);
+
+    boolean verificarSeJaExisteTickerNaCarteira(Carteira carteira, String ticker);
+
+    void adicionarAtivoNaCarteira(Carteira carteira, AtivoSimplificado ativoSimplificado);
+
+    void deletarAtivo(String ativoIdentificacao);
 }

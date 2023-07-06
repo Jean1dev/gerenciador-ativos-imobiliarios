@@ -1,8 +1,8 @@
 package br.com.carteira.infra.carteira.component;
 
-import br.com.carteira.dominio.ativo.AcaoInternacional;
-import br.com.carteira.dominio.ativo.AcaoNacional;
-import br.com.carteira.dominio.ativo.Ativo;
+import br.com.carteira.dominio.ativo.AtivoComTicker;
+import br.com.carteira.dominio.ativo.useCase.CalcularPorcentagemSobreOTotalUseCase;
+import br.com.carteira.dominio.ativo.useCase.CalcularValorRecomendadoUseCase;
 import br.com.carteira.dominio.carteira.Carteira;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacao;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacaoRepository;
@@ -42,25 +42,16 @@ public class ConsolidacaoCarteiraListener {
             return;
         }
 
-        consolidarAcoes(carteira, false);
-        consolidarAcoes(carteira, true);
+        consolidarAcoes(carteira);
     }
 
-    private void consolidarAcoes(Carteira carteira, boolean internacional) {
-        final List<String> tickersList;
-        if (internacional) {
-            log.info("consolidando internacioal");
-            tickersList = carteira.getAcoesInternacionais()
-                    .stream()
-                    .map(AcaoInternacional::getTicker).toList();
-        } else {
-            log.info("consolidando nacional");
-            tickersList = carteira.getAcoesNacionais()
-                    .stream()
-                    .map(AcaoNacional::getTicker).toList();
-        }
+    private void consolidarAcoes(Carteira carteira) {
+        final List<String> tickersList = carteira.getAtivosComTicker()
+                .stream().map(AtivoComTicker::getTicker)
+                .toList();
 
         List<String> tickersJaMonitorados = new ArrayList<>();
+
         ativoComCotacaoRepository.findAllByTickerIn(tickersList).forEach(ativoComCotacao -> {
             final var valorAtual = ativoComCotacao.getValor();
             log.info(String.format("att cotacao ativo %s para %s", ativoComCotacao.getTicker(), valorAtual));
@@ -68,30 +59,24 @@ public class ConsolidacaoCarteiraListener {
 
             ativoDosUsuariosRepository
                     .findByCarteiraRefAndTicker(carteira.getIdentificacao(), ativoComCotacao.getTicker())
-                    .ifPresentOrElse(ativoDosUsuarios -> {
-                        ativoDosUsuarios.setValorAtual(valorAtual);
-                        ativoDosUsuariosRepository.save(ativoDosUsuarios);
-                    }, () -> {
-                        Ativo acao;
-                        if (internacional) {
-                            acao = carteira.getAcaoInternacionalByTicker(ativoComCotacao.getTicker());
-                        } else {
-                            acao = carteira.getAcaoNacionalByTicker(ativoComCotacao.getTicker());
-                        }
+                    .ifPresentOrElse(
+                            ativoDosUsuarios -> calcularEAtualizarAtivoDoUsuario(ativoDosUsuarios, valorAtual, carteira),
+                            () -> {
+                                var ativo = carteira.getAtivoByTicker(ativoComCotacao.getTicker());
 
-                        ativoDosUsuariosRepository.save(new AtivoDosUsuarios(
-                                null,
-                                carteira.getIdentificacao(),
-                                acao.getTipoAtivo(),
-                                acao.getLocalAlocado(),
-                                acao.getPercentualRecomendado(),
-                                valorAtual,
-                                acao.getNota(),
-                                acao.getPercentualTotal(),
-                                acao.getQuantidade(),
-                                ativoComCotacao.getTicker()
-                        ));
-                    });
+                                ativoDosUsuariosRepository.save(new AtivoDosUsuarios(
+                                        null,
+                                        carteira.getIdentificacao(),
+                                        ativo.getTipoAtivo(),
+                                        ativo.getLocalAlocado(),
+                                        ativo.getPercentualRecomendado(),
+                                        valorAtual,
+                                        ativo.getNota(),
+                                        ativo.getPercentualTotal(),
+                                        ativo.getQuantidade(),
+                                        ativoComCotacao.getTicker()
+                                ));
+                            });
         });
 
         final var tickersQuePrecisamSerMonitorados = tickersList
@@ -104,12 +89,19 @@ public class ConsolidacaoCarteiraListener {
 
         log.info(String.format("quantidade de novas ações a ser monitoradas %s", tickersQuePrecisamSerMonitorados.size()));
         ativoComCotacaoRepository.saveAll(tickersQuePrecisamSerMonitorados.stream()
-                .map(s -> {
-                    if (internacional)
-                        return AtivoComCotacao.criarAcaoInternacionalFromTicker(s);
-
-                    return AtivoComCotacao.criarAcaoNacionalFromTicker(s);
-                })
+                .map(ticker -> AtivoComCotacao.criarCotacao(ticker, null))
                 .toList());
+    }
+
+    private void calcularEAtualizarAtivoDoUsuario(AtivoDosUsuarios ativoDosUsuarios, double valorAtual, Carteira carteira) {
+        ativoDosUsuarios.setValorAtual(valorAtual);
+
+        var ativoComTicker = AtivoDosUsuarios.toAtivoComTicker(ativoDosUsuarios);
+        var porcentagemSobreTotal = new CalcularPorcentagemSobreOTotalUseCase().calcular(ativoComTicker, carteira.getAtivos());
+        var valorRecomendado = new CalcularValorRecomendadoUseCase().calcular(ativoComTicker, carteira.removeByTicker(ativoComTicker.getTicker()));
+
+        ativoDosUsuarios.setPercentualTotal(porcentagemSobreTotal);
+        ativoDosUsuarios.setValorRecomendado(valorRecomendado);
+        ativoDosUsuariosRepository.save(ativoDosUsuarios);
     }
 }

@@ -47,6 +47,9 @@ public final class CalcularValorRecomendadoUseCase {
 
         var totalNotas = collect.stream().mapToDouble(Ativo::getNota).sum();
 
+        if (novoAtivo.getNota() == 0)
+            return 0;
+
         var recomendado = (novoAtivo.getNota() / totalNotas) * 100;
         return arredondamentoPadrao(recomendado);
     }

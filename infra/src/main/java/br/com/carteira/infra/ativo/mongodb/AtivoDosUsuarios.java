@@ -1,5 +1,6 @@
 package br.com.carteira.infra.ativo.mongodb;
 
+import br.com.carteira.dominio.ativo.AtivoComTicker;
 import br.com.carteira.dominio.ativo.TipoAtivo;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -17,6 +18,7 @@ public class AtivoDosUsuarios {
     private double percentualTotal;
     private double quantidade;
     private String ticker;
+    private double valorRecomendado;
 
     public AtivoDosUsuarios(
             String id,
@@ -42,8 +44,41 @@ public class AtivoDosUsuarios {
         this.ticker = ticker;
     }
 
+    public static AtivoComTicker toAtivoComTicker(AtivoDosUsuarios ativoDosUsuarios) {
+        return new AtivoComTicker(
+                ativoDosUsuarios.getTicker(),
+                ativoDosUsuarios.getTipoAtivo(),
+                ativoDosUsuarios.getLocalAlocado(),
+                ativoDosUsuarios.getPercentualRecomendado(),
+                ativoDosUsuarios.getValorAtual(),
+                ativoDosUsuarios.getNota(),
+                ativoDosUsuarios.getPercentualTotal(),
+                ativoDosUsuarios.getQuantidade()
+        );
+    }
+
+    public void setNota(int nota) {
+        this.nota = nota;
+    }
+
+    public void setQuantidade(double quantidade) {
+        this.quantidade = quantidade;
+    }
+
+    public void setPercentualTotal(double percentualTotal) {
+        this.percentualTotal = percentualTotal;
+    }
+
     public void setValorAtual(double valorAtual) {
         this.valorAtual = valorAtual;
+    }
+
+    public double getValorRecomendado() {
+        return valorRecomendado;
+    }
+
+    public void setValorRecomendado(double valorRecomendado) {
+        this.valorRecomendado = valorRecomendado;
     }
 
     public String getId() {

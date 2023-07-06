@@ -1,5 +1,8 @@
 package br.com.carteira.infra.ativo.mongodb;
 
+import br.com.carteira.dominio.ativo.AcaoInternacional;
+import br.com.carteira.dominio.ativo.AcaoNacional;
+import br.com.carteira.dominio.ativo.Ativo;
 import br.com.carteira.dominio.ativo.TipoAtivo;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -29,15 +32,32 @@ public class AtivoComCotacao {
         this.valor = valor;
     }
 
-    public static AtivoComCotacao criarAcaoNacionalFromTicker(String ticker) {
-        return criarCotacao(ticker, TipoAtivo.ACAO_NACIONAL);
+    public static Ativo fromDocument(AtivoComCotacao ativoComCotacao) {
+        if (TipoAtivo.ACAO_INTERNACIONAL.equals(ativoComCotacao.tipoAtivo)) {
+            return new AcaoInternacional(
+                    ativoComCotacao.getTicker(),
+                    0,
+                    ativoComCotacao.getValor(),
+                    0,
+                    0,
+                    0
+            );
+        }
+
+        if (TipoAtivo.ACAO_NACIONAL.equals(ativoComCotacao.tipoAtivo)) {
+            return new AcaoNacional(
+                    ativoComCotacao.getTicker(),
+                    0,
+                    ativoComCotacao.getValor(),
+                    0,
+                    0,
+                    0
+            );
+        }
+        return null;
     }
 
-    public static AtivoComCotacao criarAcaoInternacionalFromTicker(String ticker) {
-        return criarCotacao(ticker, TipoAtivo.ACAO_INTERNACIONAL);
-    }
-
-    private static AtivoComCotacao criarCotacao(String ticker, TipoAtivo tipoAtivo) {
+    public static AtivoComCotacao criarCotacao(String ticker, TipoAtivo tipoAtivo) {
         return new AtivoComCotacao(
                 null,
                 ticker,
@@ -45,6 +65,11 @@ public class AtivoComCotacao {
                 LocalDateTime.now(),
                 0
         );
+    }
+
+    public void atualizarValor(Double valor) {
+        this.valor = valor;
+        this.ultimaAtualizacao = LocalDateTime.now();
     }
 
     public double getValor() {
