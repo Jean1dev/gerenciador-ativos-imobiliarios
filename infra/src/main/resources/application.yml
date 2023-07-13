@@ -5,6 +5,7 @@ spring:
   data:
     mongodb:
       uri: ${MONGO_URL:mongodb://localhost:27017/carteira}
+      auto-index-creation: true
 server:
   port: ${PORT:8080}
 

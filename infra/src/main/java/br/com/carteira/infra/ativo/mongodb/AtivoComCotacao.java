@@ -17,6 +17,7 @@ public class AtivoComCotacao {
     private TipoAtivo tipoAtivo;
     private LocalDateTime ultimaAtualizacao;
     private double valor;
+    private String image;
 
     public AtivoComCotacao(
             String id,
@@ -70,6 +71,14 @@ public class AtivoComCotacao {
     public void atualizarValor(Double valor) {
         this.valor = valor;
         this.ultimaAtualizacao = LocalDateTime.now();
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public double getValor() {

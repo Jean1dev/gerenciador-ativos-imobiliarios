@@ -19,6 +19,7 @@ public class AtivoDosUsuarios {
     private double quantidade;
     private String ticker;
     private double valorRecomendado;
+    private String image;
 
     public AtivoDosUsuarios(
             String id,
@@ -30,8 +31,8 @@ public class AtivoDosUsuarios {
             int nota,
             double percentualTotal,
             double quantidade,
-            String ticker
-    ) {
+            String ticker,
+            String image) {
         this.id = id;
         this.carteiraRef = carteiraRef;
         this.tipoAtivo = tipoAtivo;
@@ -42,6 +43,7 @@ public class AtivoDosUsuarios {
         this.percentualTotal = percentualTotal;
         this.quantidade = quantidade;
         this.ticker = ticker;
+        this.image = image;
     }
 
     public static AtivoComTicker toAtivoComTicker(AtivoDosUsuarios ativoDosUsuarios) {
@@ -55,6 +57,10 @@ public class AtivoDosUsuarios {
                 ativoDosUsuarios.getPercentualTotal(),
                 ativoDosUsuarios.getQuantidade()
         );
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public void setNota(int nota) {
@@ -119,5 +125,9 @@ public class AtivoDosUsuarios {
 
     public String getTicker() {
         return ticker;
+    }
+
+    public String getImage() {
+        return image;
     }
 }

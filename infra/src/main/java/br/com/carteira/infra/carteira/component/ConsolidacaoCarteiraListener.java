@@ -52,6 +52,7 @@ public class ConsolidacaoCarteiraListener {
 
         List<String> tickersJaMonitorados = new ArrayList<>();
 
+        // TODO:: REFATORAR PARA FAZER TODAS AS OPERACOES EM LISTA
         ativoComCotacaoRepository.findAllByTickerIn(tickersList).forEach(ativoComCotacao -> {
             final var valorAtual = ativoComCotacao.getValor();
             log.info(String.format("att cotacao ativo %s para %s", ativoComCotacao.getTicker(), valorAtual));
@@ -60,7 +61,11 @@ public class ConsolidacaoCarteiraListener {
             ativoDosUsuariosRepository
                     .findByCarteiraRefAndTicker(carteira.getIdentificacao(), ativoComCotacao.getTicker())
                     .ifPresentOrElse(
-                            ativoDosUsuarios -> calcularEAtualizarAtivoDoUsuario(ativoDosUsuarios, valorAtual, carteira),
+                            ativoDosUsuarios -> {
+                                calcularEAtualizarAtivoDoUsuario(ativoDosUsuarios, valorAtual, carteira);
+                                ativoDosUsuarios.setImage(ativoDosUsuarios.getImage());
+                                ativoDosUsuariosRepository.save(ativoDosUsuarios);
+                            },
                             () -> {
                                 var ativo = carteira.getAtivoByTicker(ativoComCotacao.getTicker());
 
@@ -74,8 +79,8 @@ public class ConsolidacaoCarteiraListener {
                                         ativo.getNota(),
                                         ativo.getPercentualTotal(),
                                         ativo.getQuantidade(),
-                                        ativoComCotacao.getTicker()
-                                ));
+                                        ativoComCotacao.getTicker(),
+                                        ativoComCotacao.getImage()));
                             });
         });
 
@@ -93,7 +98,7 @@ public class ConsolidacaoCarteiraListener {
                 .toList());
     }
 
-    private void calcularEAtualizarAtivoDoUsuario(AtivoDosUsuarios ativoDosUsuarios, double valorAtual, Carteira carteira) {
+    private AtivoDosUsuarios calcularEAtualizarAtivoDoUsuario(AtivoDosUsuarios ativoDosUsuarios, double valorAtual, Carteira carteira) {
         ativoDosUsuarios.setValorAtual(valorAtual);
 
         var ativoComTicker = AtivoDosUsuarios.toAtivoComTicker(ativoDosUsuarios);
@@ -102,6 +107,6 @@ public class ConsolidacaoCarteiraListener {
 
         ativoDosUsuarios.setPercentualTotal(porcentagemSobreTotal);
         ativoDosUsuarios.setValorRecomendado(valorRecomendado);
-        ativoDosUsuariosRepository.save(ativoDosUsuarios);
+        return ativoDosUsuarios;
     }
 }

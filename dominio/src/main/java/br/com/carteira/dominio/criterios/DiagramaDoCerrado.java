@@ -28,4 +28,8 @@ public class DiagramaDoCerrado {
                 new Criterio("DÍVIDA RUIM", "Div. Líquida for negatica ou DL/P/L for menor que 50%, sempre SIM.")
         );
     }
+
+    public List<Criterio> getCriterios() {
+        return criterios;
+    }
 }

@@ -24,7 +24,7 @@ public class AtualizarCotacaoAtivos {
         this.ativoComCotacaoRepository = ativoComCotacaoRepository;
     }
 
-    @PostConstruct
+    //@PostConstruct
     public void onStartUp() {
         run();
     }

@@ -20,4 +20,8 @@ public class AvaliacaoFundosImobiliarios {
                 new Criterio("", "É dependente de um único inquilino ou imóvel? (Em caso afirmativo, costumo descartar, mas a opção é sua)")
         );
     }
+
+    public List<Criterio> getCriterios() {
+        return criterios;
+    }
 }
