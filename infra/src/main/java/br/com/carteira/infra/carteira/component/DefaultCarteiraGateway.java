@@ -99,7 +99,7 @@ public class DefaultCarteiraGateway implements CarteiraGateway {
                 0,
                 ativoSimplificado.quantidade(),
                 ativoSimplificado.papel(),
-                image));
+                null));
     }
 
     @Override
