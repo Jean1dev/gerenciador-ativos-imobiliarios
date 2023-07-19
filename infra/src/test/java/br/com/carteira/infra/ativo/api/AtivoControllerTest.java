@@ -83,7 +83,7 @@ class AtivoControllerTest extends E2ETests {
                 0.0,
                 0.0,
                 "String ticker",
-                image)).getId();
+                null)).getId();
 
         final var request = delete("/ativo/" + stringTicker)
                 .contentType(MediaType.APPLICATION_JSON)
