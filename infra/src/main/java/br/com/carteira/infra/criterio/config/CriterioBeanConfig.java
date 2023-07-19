@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class CriterioBeanConfig {
 
     @Bean
-    public TrazerDiagramaCorretoUseCase corretoUseCase() {
+    public TrazerDiagramaCorretoUseCase trazerDiagramaCorretoUseCase() {
         return new TrazerDiagramaCorretoUseCase();
     }
 }
