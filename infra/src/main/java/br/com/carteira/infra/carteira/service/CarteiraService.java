@@ -7,8 +7,6 @@ import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuariosRepository;
 import br.com.carteira.infra.carteira.mongodb.CarteiraDocument;
 import br.com.carteira.infra.carteira.mongodb.CarteiraRepository;
 import br.com.carteira.infra.usuario.service.UsuarioService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +15,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class CarteiraService {
-    private static final Logger log = LoggerFactory.getLogger(CarteiraService.class);
     private final CarteiraRepository carteiraRepository;
     private final UsuarioService usuarioService;
     private final AtivoDosUsuariosRepository ativoDosUsuariosRepository;
