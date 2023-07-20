@@ -3,6 +3,7 @@ package br.com.carteira.infra.ativo.component;
 import br.com.carteira.dominio.ativo.Ativo;
 import br.com.carteira.dominio.ativo.AtivosComTickerGateway;
 import br.com.carteira.dominio.ativo.TipoAtivo;
+import br.com.carteira.dominio.ativo.useCase.records.AtualizarAtivoInput;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacao;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacaoRepository;
 import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuariosRepository;
@@ -36,10 +37,11 @@ public class DefaultAtivosComTickerGateway implements AtivosComTickerGateway {
     }
 
     @Override
-    public void atualizarAtivo(String ativoId, Integer nota, Double quantidade) {
-        var ativoDosUsuarios = ativoDosUsuariosRepository.findById(ativoId).orElseThrow();
-        ativoDosUsuarios.setNota(nota);
-        ativoDosUsuarios.setQuantidade(quantidade);
+    public void atualizarAtivo(AtualizarAtivoInput input) {
+        var ativoDosUsuarios = ativoDosUsuariosRepository.findById(input.identificacao()).orElseThrow();
+        ativoDosUsuarios.setNota(input.nota());
+        ativoDosUsuarios.setQuantidade(input.quantidade());
+        ativoDosUsuarios.setCriterios(input.criterios());
         ativoDosUsuariosRepository.save(ativoDosUsuarios);
     }
 }

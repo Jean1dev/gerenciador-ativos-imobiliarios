@@ -5,6 +5,7 @@ import br.com.carteira.dominio.carteira.useCase.records.AtivoSimplificado;
 import br.com.carteira.dominio.carteira.useCase.records.CriarOuAtualizarCarteiraInput;
 import br.com.carteira.dominio.metas.MetaDefinida;
 import br.com.carteira.infra.E2ETests;
+import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuariosRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -33,6 +35,9 @@ class CarteiraControllerTest extends E2ETests {
 
     @Autowired
     private MongoOperations mongoOperations;
+
+    @Autowired
+    private AtivoDosUsuariosRepository ativoDosUsuariosRepository;
 
     @Container
     public static MongoDBContainer MONGO_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:6.0.5"));
@@ -66,6 +71,7 @@ class CarteiraControllerTest extends E2ETests {
     @Test
     @DisplayName("deve criar uma carteira com payload completo")
     public void deveCriarCompleto() throws Exception {
+        ativoDosUsuariosRepository.deleteAll();
         Collection<AtivoSimplificado> ativos = List.of(
                 new AtivoSimplificado(TipoAtivo.ACAO_NACIONAL, "PETR4", 5, 4),
                 new AtivoSimplificado(TipoAtivo.ACAO_INTERNACIONAL, "aapl4", 5, 4)
@@ -81,6 +87,7 @@ class CarteiraControllerTest extends E2ETests {
                 .andDo(print());
 
         response.andExpect(status().isOk());
+        assertEquals(2, ativoDosUsuariosRepository.count());
     }
 
     @Test

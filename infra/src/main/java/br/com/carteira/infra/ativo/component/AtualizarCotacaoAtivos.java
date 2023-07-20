@@ -2,7 +2,6 @@ package br.com.carteira.infra.ativo.component;
 
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacaoRepository;
 import br.com.carteira.infra.integracoes.BMFBovespa;
-import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -22,11 +21,6 @@ public class AtualizarCotacaoAtivos {
     public AtualizarCotacaoAtivos(BMFBovespa bmfBovespa, AtivoComCotacaoRepository ativoComCotacaoRepository) {
         this.bmfBovespa = bmfBovespa;
         this.ativoComCotacaoRepository = ativoComCotacaoRepository;
-    }
-
-    //@PostConstruct
-    public void onStartUp() {
-        run();
     }
 
     @Async

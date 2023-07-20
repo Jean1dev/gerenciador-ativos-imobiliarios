@@ -80,7 +80,8 @@ public class ConsolidacaoCarteiraListener {
                                         ativo.getPercentualTotal(),
                                         ativo.getQuantidade(),
                                         ativoComCotacao.getTicker(),
-                                        ativoComCotacao.getImage()));
+                                        ativoComCotacao.getImage(),
+                                        null));
                             });
         });
 

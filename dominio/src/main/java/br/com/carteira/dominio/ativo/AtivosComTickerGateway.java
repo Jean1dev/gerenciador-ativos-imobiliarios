@@ -1,5 +1,7 @@
 package br.com.carteira.dominio.ativo;
 
+import br.com.carteira.dominio.ativo.useCase.records.AtualizarAtivoInput;
+
 import java.util.Optional;
 
 public interface AtivosComTickerGateway {
@@ -8,5 +10,5 @@ public interface AtivosComTickerGateway {
 
     void adicionarParaMonitoramento(String ticker, TipoAtivo tipoAtivo);
 
-    void atualizarAtivo(String ativoId, Integer nota, Double quantidade);
+    void atualizarAtivo(AtualizarAtivoInput input);
 }

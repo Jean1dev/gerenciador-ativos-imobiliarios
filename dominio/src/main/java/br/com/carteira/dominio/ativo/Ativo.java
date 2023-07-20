@@ -52,12 +52,12 @@ public abstract class Ativo {
                     case ACAO_INTERNACIONAL -> {
                         yield AcaoInternacional.fromSimplificado(ativoSimplificado);
                     }
-                    case REITs -> null;
-                    case FII -> null;
-                    case CRYPTO -> null;
+                    case REITs -> AtivoComTicker.fromSimplificado(ativoSimplificado);
+                    case FII -> AtivoComTicker.fromSimplificado(ativoSimplificado);
+                    case CRYPTO -> AtivoComTicker.fromSimplificado(ativoSimplificado);
                     case RENDA_FIXA -> new RendaFixa(
                             ativoSimplificado.tipoAtivo(),
-                            null,
+                            ativoSimplificado.papel(),
                             0,
                             0,
                             ativoSimplificado.nota(),

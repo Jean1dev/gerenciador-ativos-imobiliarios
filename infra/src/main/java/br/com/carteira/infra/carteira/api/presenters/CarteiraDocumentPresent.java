@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CarteiraDocumentPresent implements Serializable {
+public final class CarteiraDocumentPresent implements Serializable {
     private final String id;
     private final String nome;
     private final Integer quantidadeAtivos;

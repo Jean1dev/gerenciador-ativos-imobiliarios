@@ -1,9 +1,6 @@
 package br.com.carteira.dominio.carteira;
 
-import br.com.carteira.dominio.ativo.AcaoInternacional;
-import br.com.carteira.dominio.ativo.AcaoNacional;
-import br.com.carteira.dominio.ativo.Ativo;
-import br.com.carteira.dominio.ativo.AtivoComTicker;
+import br.com.carteira.dominio.ativo.*;
 import br.com.carteira.dominio.exception.DominioException;
 import br.com.carteira.dominio.metas.Meta;
 
@@ -14,7 +11,6 @@ import java.util.stream.Collectors;
 public class Carteira {
     private String nome;
     private Meta meta;
-
     private Set<Ativo> ativos;
     private String identificacao;
     private int quantidadeAtivos;
@@ -44,6 +40,11 @@ public class Carteira {
 
     private boolean verificarAtivoComTicker(Ativo ativo) {
         try {
+            if (TipoAtivo.CRYPTO.equals(ativo.getTipoAtivo())
+                    || TipoAtivo.RENDA_FIXA.equals(ativo.getTipoAtivo())) {
+                return false;
+            }
+
             AtivoComTicker a = (AtivoComTicker) ativo;
             return Objects.nonNull(a.getTicker());
         } catch (ClassCastException classCastException) {
@@ -51,23 +52,9 @@ public class Carteira {
         }
     }
 
-    public AcaoNacional getAcaoNacionalByTicker(String ticker) {
-        return (AcaoNacional) ativos.stream()
-                .filter(this::verificarAcaoNacional)
-                .findFirst()
-                .orElseThrow(() -> new DominioException("Não existe essa ação na carteira"));
-    }
-
     public AtivoComTicker getAtivoByTicker(String ticker) {
         return (AtivoComTicker) ativos.stream()
                 .filter(this::verificarAtivoComTicker)
-                .findFirst()
-                .orElseThrow(() -> new DominioException("Não existe essa ação na carteira"));
-    }
-
-    public AcaoInternacional getAcaoInternacionalByTicker(String ticker) {
-        return (AcaoInternacional) ativos.stream()
-                .filter(this::verificarAcaoInternacional)
                 .findFirst()
                 .orElseThrow(() -> new DominioException("Não existe essa ação na carteira"));
     }

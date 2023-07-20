@@ -45,4 +45,9 @@ public class AcaoNacional extends Ativo {
     public String getTicker() {
         return ticker;
     }
+
+    @Override
+    public String getLocalAlocado() {
+        return ticker;
+    }
 }

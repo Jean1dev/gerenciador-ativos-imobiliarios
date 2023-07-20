@@ -23,7 +23,7 @@ public class GestaoAtivosUseCase {
     }
 
     public void atualizarAtivo(AtualizarAtivoInput input) {
-        ativosComTickerGateway.atualizarAtivo(input.identificacao(), input.nota(), input.quantidade());
+        ativosComTickerGateway.atualizarAtivo(input);
         carteiraGateway.consolidar(carteiraGateway.buscarCarteiraPeloAtivo(input.identificacao()));
     }
 
@@ -38,7 +38,13 @@ public class GestaoAtivosUseCase {
         Objects.requireNonNull(input.tipoAtivo(), "Tipo ativo não pode ser null");
         Carteira carteira = carteiraGateway.buscarCarteiraPeloId(input.identificacaoCarteira());
         if (isAtivoComticker(input)) {
-            adicionarAtivoComTicker(carteira, input.tipoAtivo(), input.nome(), input.quantidade(), input.nota());
+            adicionarAtivoComTicker(carteira, new AtivoSimplificado(
+                    input.tipoAtivo(),
+                    input.nome().toUpperCase(),
+                    input.quantidade(),
+                    input.nota(),
+                    input.criterios()
+            ));
             carteira.setQuantidadeAtivos(carteira.getQuantidadeAtivos() + 1);
             carteiraGateway.salvar(carteira);
             return;
@@ -55,31 +61,20 @@ public class GestaoAtivosUseCase {
                 ));
     }
 
-    private void adicionarAtivoComTicker(
-            Carteira carteira,
-            TipoAtivo tipoAtivo,
-            String nome,
-            Double quantidade,
-            Integer nota) {
+    private void adicionarAtivoComTicker(Carteira carteira, AtivoSimplificado ativoSimplificado) {
         Objects.requireNonNull(carteira, "carteira nao pode ser null");
-        Objects.requireNonNull(tipoAtivo, "tipoAtivo nao pode ser null");
-        Objects.requireNonNull(nome, "Ticker nao pode ser null");
-        Objects.requireNonNull(quantidade, "quantidade nao pode ser null");
-        Objects.requireNonNull(nota, "nota nao pode ser null");
-        ativosComTickerGateway.buscarPeloTicker(nome)
+        Objects.requireNonNull(ativoSimplificado.tipoAtivo(), "tipoAtivo nao pode ser null");
+        Objects.requireNonNull(ativoSimplificado.papel(), "Ticker nao pode ser null");
+        Objects.requireNonNull(ativoSimplificado.quantidade(), "quantidade nao pode ser null");
+        Objects.requireNonNull(ativoSimplificado.nota(), "nota nao pode ser null");
+        ativosComTickerGateway.buscarPeloTicker(ativoSimplificado.papel())
                 .ifPresentOrElse(
                         ativo -> {
-                            if (carteiraGateway.verificarSeJaExisteTickerNaCarteira(carteira, nome)) {
+                            if (carteiraGateway.verificarSeJaExisteTickerNaCarteira(carteira, ativoSimplificado.papel())) {
                                 throw new DominioException("Ativo já adicionado nessa carteira");
                             }
 
-                            carteiraGateway.adicionarAtivoNaCarteira(carteira,
-                                    new AtivoSimplificado(
-                                            tipoAtivo,
-                                            nome.toUpperCase(),
-                                            quantidade,
-                                            nota
-                                    ));
+                            carteiraGateway.adicionarAtivoNaCarteira(carteira, ativoSimplificado);
 
                             var carteiraParaConsolidar = new Carteira();
                             carteiraParaConsolidar.setNome(carteira.getNome());
@@ -88,14 +83,8 @@ public class GestaoAtivosUseCase {
                             carteiraGateway.consolidar(carteiraParaConsolidar);
                         },
                         () -> {
-                            ativosComTickerGateway.adicionarParaMonitoramento(nome, tipoAtivo);
-                            carteiraGateway.adicionarAtivoNaCarteira(carteira,
-                                    new AtivoSimplificado(
-                                            tipoAtivo,
-                                            nome,
-                                            quantidade,
-                                            nota
-                                    ));
+                            ativosComTickerGateway.adicionarParaMonitoramento(ativoSimplificado.papel(), ativoSimplificado.tipoAtivo());
+                            carteiraGateway.adicionarAtivoNaCarteira(carteira, ativoSimplificado);
                         }
                 );
     }

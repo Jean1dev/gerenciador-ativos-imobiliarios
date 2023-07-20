@@ -43,11 +43,10 @@ public class DefaultCarteiraGateway implements CarteiraGateway {
     public Carteira buscarCarteiraPeloAtivo(String ativoIdentificacao) {
         return ativoDosUsuariosRepository.findById(ativoIdentificacao)
                 .map(AtivoDosUsuarios::getCarteiraRef)
-                .map(carteraId -> {
-                    return carteiraRepository.findById(carteraId)
-                            .map(CarteiraDocument::simplificadoFromDocument)
-                            .orElseThrow();
-                }).orElseThrow();
+                .map(carteraId -> carteiraRepository.findById(carteraId)
+                        .map(CarteiraDocument::simplificadoFromDocument)
+                        .orElseThrow())
+                .orElseThrow();
     }
 
     @Override
@@ -61,6 +60,16 @@ public class DefaultCarteiraGateway implements CarteiraGateway {
                 usuario.getId(),
                 carteira.getQuantidadeAtivos()));
         carteira.setIdentificacao(carteiraDocument.getId());
+
+        carteira.getAtivos()
+                .stream()
+                .map(ativo -> new AtivoSimplificado(
+                        ativo.getTipoAtivo(),
+                        ativo.getLocalAlocado(),
+                        ativo.getQuantidade(),
+                        ativo.getNota()
+                )).forEach(ativoSimplificado -> adicionarAtivoNaCarteira(carteira, ativoSimplificado));
+
         return carteira;
     }
 
@@ -77,7 +86,8 @@ public class DefaultCarteiraGateway implements CarteiraGateway {
     @Override
     public Carteira buscarCarteiraPeloId(String id) {
         return carteiraRepository.findById(id)
-                .map(CarteiraDocument::simplificadoFromDocument).orElseThrow();
+                .map(CarteiraDocument::simplificadoFromDocument)
+                .orElseThrow();
     }
 
     @Override
@@ -99,7 +109,8 @@ public class DefaultCarteiraGateway implements CarteiraGateway {
                 0,
                 ativoSimplificado.quantidade(),
                 ativoSimplificado.papel(),
-                null));
+                null,
+                ativoSimplificado.criterios()));
     }
 
     @Override

@@ -2,6 +2,8 @@ package br.com.carteira.infra.ativo.api;
 
 import br.com.carteira.dominio.ativo.TipoAtivo;
 import br.com.carteira.dominio.ativo.useCase.records.AdicionarAtivoInput;
+import br.com.carteira.dominio.ativo.useCase.records.AtualizarAtivoInput;
+import br.com.carteira.dominio.criterios.Criterio;
 import br.com.carteira.infra.E2ETests;
 import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuarios;
 import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuariosRepository;
@@ -16,6 +18,8 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,6 +45,48 @@ class AtivoControllerTest extends E2ETests {
     }
 
     @Test
+    @DisplayName("Deve atualizar um ativo")
+    public void deveAtualizarAtivo() throws Exception {
+        var idCarteira = carteiraRepository.save(new CarteiraDocument(null, "teste22", null, null, 1)).getId();
+        var idAtivo = ativoDosUsuariosRepository.save(new AtivoDosUsuarios(
+                null,
+                idCarteira,
+                null,
+                null,
+                0,
+                0,
+                0,
+                0.0,
+                0.0,
+                "String ticker",
+                null,
+                null)).getId();
+
+        final var input = new AtualizarAtivoInput(
+                1.0,
+                5,
+                idAtivo,
+                List.of(new Criterio("FAKE", "FAKE"))
+        );
+
+        final var request = put("/ativo")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(input));
+
+        this.mvc.perform(request)
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        var ativoDosUsuarios = ativoDosUsuariosRepository.findById(idAtivo).orElseThrow();
+        var criterio = ativoDosUsuarios.getCriterios().get(0);
+        assertEquals("FAKE", criterio.getCriterio());
+        assertEquals("FAKE", criterio.getPergunta());
+        assertEquals(false, criterio.getSimOuNao());
+        assertEquals(1.0, ativoDosUsuarios.getQuantidade());
+        assertEquals(5, ativoDosUsuarios.getNota());
+    }
+
+    @Test
     @DisplayName("deve adicionar uma acao")
     public void deveAdicionarUmaAcao() throws Exception {
         var idCarteira = carteiraRepository.save(new CarteiraDocument(null, "teste", null, null, 0)).getId();
@@ -52,7 +98,8 @@ class AtivoControllerTest extends E2ETests {
                 "String tipoAlocacao",
                 1.0,
                 "AAPL",
-                idCarteira
+                idCarteira,
+                null
         );
 
         final var request = post("/ativo")
@@ -83,6 +130,7 @@ class AtivoControllerTest extends E2ETests {
                 0.0,
                 0.0,
                 "String ticker",
+                null,
                 null)).getId();
 
         final var request = delete("/ativo/" + stringTicker)

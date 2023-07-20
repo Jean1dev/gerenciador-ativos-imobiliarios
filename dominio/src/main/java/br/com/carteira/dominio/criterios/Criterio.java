@@ -10,6 +10,9 @@ public class Criterio {
         this.pergunta = pergunta;
     }
 
+    public Criterio() {
+    }
+
     public void setSimOuNao(Boolean simOuNao) {
         this.simOuNao = simOuNao;
     }

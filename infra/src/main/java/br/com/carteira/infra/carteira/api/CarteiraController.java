@@ -4,12 +4,13 @@ import br.com.carteira.dominio.carteira.useCase.records.CriarOuAtualizarCarteira
 import br.com.carteira.dominio.metas.AtivoComPercentual;
 import br.com.carteira.dominio.metas.Meta;
 import br.com.carteira.dominio.metas.MetaDefinida;
-import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuarios;
+import br.com.carteira.infra.carteira.api.presenters.AtivoDosUsuariosListagemPresent;
 import br.com.carteira.infra.carteira.api.presenters.CarteiraDocumentPresent;
 import br.com.carteira.infra.carteira.service.CarteiraService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -20,6 +21,11 @@ public class CarteiraController {
 
     public CarteiraController(CarteiraService service) {
         this.service = service;
+    }
+
+    @GetMapping("distribuicao-por-meta/{carteira}")
+    public Map getDistribuicao(@PathVariable("carteira") String carteira) {
+        return service.distribuicaoPorMeta(carteira);
     }
 
     @PostMapping("consolidar/{carteira}")
@@ -33,8 +39,8 @@ public class CarteiraController {
     }
 
     @GetMapping("meus-ativos/{carteira}")
-    public List<AtivoDosUsuarios> meusAtivos(@PathVariable("carteira") String carteiraRef) {
-        return service.meusAtivos(carteiraRef);
+    public List<AtivoDosUsuariosListagemPresent> meusAtivos(@PathVariable("carteira") String carteiraRef) {
+        return AtivoDosUsuariosListagemPresent.present(service.meusAtivos(carteiraRef));
     }
 
     @PostMapping

@@ -2,8 +2,11 @@ package br.com.carteira.infra.ativo.mongodb;
 
 import br.com.carteira.dominio.ativo.AtivoComTicker;
 import br.com.carteira.dominio.ativo.TipoAtivo;
+import br.com.carteira.dominio.criterios.Criterio;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
 
 @Document("ativo_dos_usuarios")
 public class AtivoDosUsuarios {
@@ -20,6 +23,7 @@ public class AtivoDosUsuarios {
     private String ticker;
     private double valorRecomendado;
     private String image;
+    List<Criterio> criterios;
 
     public AtivoDosUsuarios(
             String id,
@@ -32,7 +36,8 @@ public class AtivoDosUsuarios {
             double percentualTotal,
             double quantidade,
             String ticker,
-            String image) {
+            String image,
+            List<Criterio> criterios) {
         this.id = id;
         this.carteiraRef = carteiraRef;
         this.tipoAtivo = tipoAtivo;
@@ -44,6 +49,7 @@ public class AtivoDosUsuarios {
         this.quantidade = quantidade;
         this.ticker = ticker;
         this.image = image;
+        this.criterios = criterios;
     }
 
     public static AtivoComTicker toAtivoComTicker(AtivoDosUsuarios ativoDosUsuarios) {
@@ -61,6 +67,10 @@ public class AtivoDosUsuarios {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public void setCriterios(List<Criterio> criterios) {
+        this.criterios = criterios;
     }
 
     public void setNota(int nota) {
@@ -129,5 +139,9 @@ public class AtivoDosUsuarios {
 
     public String getImage() {
         return image;
+    }
+
+    public List<Criterio> getCriterios() {
+        return criterios;
     }
 }
