@@ -16,7 +16,7 @@ class AcaoNacionalTest {
         assertNotNull(acaoNacional);
         assertEquals("PETR4", acaoNacional.getTicker());
         assertEquals(TipoAtivo.ACAO_NACIONAL, acaoNacional.getTipoAtivo());
-        assertEquals("B3", acaoNacional.getLocalAlocado());
+        assertEquals("PETR4", acaoNacional.getLocalAlocado());
     }
 
     @Test
