@@ -26,7 +26,7 @@ public class AtualizarCotacaoAtivos {
     @Async
     public void run() {
         log.info("iniciando processo de atualizacao de ativos");
-        var now = LocalDate.now();
+        final var now = LocalDate.now();
         ativoComCotacaoRepository.findAll().stream().filter(ativoComCotacao -> {
             if (now.isAfter(ativoComCotacao.getUltimaAtualizacao().toLocalDate())) {
                 return true;

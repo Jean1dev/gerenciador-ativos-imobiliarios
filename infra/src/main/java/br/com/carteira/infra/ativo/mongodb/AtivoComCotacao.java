@@ -79,6 +79,7 @@ public class AtivoComCotacao {
 
     public void setImage(String image) {
         this.image = image;
+        ultimaAtualizacao = LocalDateTime.now();
     }
 
     public double getValor() {
