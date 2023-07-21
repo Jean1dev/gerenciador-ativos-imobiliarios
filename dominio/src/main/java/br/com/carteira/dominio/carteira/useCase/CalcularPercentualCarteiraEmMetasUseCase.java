@@ -42,7 +42,11 @@ public class CalcularPercentualCarteiraEmMetasUseCase {
 
         HashMap<String, Double> map = new HashMap<>();
         tipoAtivoComTotals.forEach(tipoAtivoComTotal -> {
-            var percentualDeCada = totalCarteira / tipoAtivoComTotal.totalPorTipoAtivo;
+            if (tipoAtivoComTotal.totalPorTipoAtivo == 0) {
+                map.put(tipoAtivoComTotal.tipoAtivo.descricao(), 0.0);
+                return;
+            }
+            var percentualDeCada = (tipoAtivoComTotal.totalPorTipoAtivo / totalCarteira) * 100;
             var percentaulArredondado = arredondamentoPadrao(percentualDeCada);
             map.put(tipoAtivoComTotal.tipoAtivo.descricao(), percentaulArredondado);
         });
