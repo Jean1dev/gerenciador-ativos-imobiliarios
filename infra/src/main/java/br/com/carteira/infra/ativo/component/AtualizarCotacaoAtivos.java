@@ -28,12 +28,17 @@ public class AtualizarCotacaoAtivos {
         log.info("iniciando processo de atualizacao de ativos");
         final var now = LocalDate.now();
         ativoComCotacaoRepository.findAll().stream().filter(ativoComCotacao -> {
+            if (ativoComCotacao.getValor() == 0) {
+                return true;
+            }
+
             if (now.isAfter(ativoComCotacao.getUltimaAtualizacao().toLocalDate())) {
                 return true;
             }
 
             return false;
         }).forEach(ativoComCotacao -> {
+            log.info(ativoComCotacao.getTicker());
             var cotacao = bmfBovespa.getCotacao(ativoComCotacao.getTicker() + ".SAO");
             if (cotacao != null) {
                 log.info(String.format("atualizando %s para %s", ativoComCotacao.getTicker(), cotacao.valor()));

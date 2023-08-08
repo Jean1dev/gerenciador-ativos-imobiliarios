@@ -1,14 +1,17 @@
 package br.com.carteira.infra.carteira.api;
 
 import br.com.carteira.dominio.carteira.useCase.records.CriarOuAtualizarCarteiraInput;
+import br.com.carteira.dominio.carteira.useCase.records.NovoAporteOutput;
 import br.com.carteira.dominio.metas.AtivoComPercentual;
 import br.com.carteira.dominio.metas.Meta;
 import br.com.carteira.dominio.metas.MetaDefinida;
 import br.com.carteira.infra.carteira.api.presenters.AtivoDosUsuariosListagemPresent;
 import br.com.carteira.infra.carteira.api.presenters.CarteiraDocumentPresent;
 import br.com.carteira.infra.carteira.service.CarteiraService;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +28,15 @@ public class CarteiraController {
 
     @GetMapping("distribuicao-por-meta/{carteira}")
     public Map getDistribuicao(@PathVariable("carteira") String carteira) {
-        return service.distribuicaoPorMeta(carteira);
+        HashMap<String, Double> remap = new HashMap<>();
+        service.distribuicaoPorMeta(carteira).forEach((key, value) -> remap.put(key, value.percentual()));
+        return remap;
+    }
+
+    @PostMapping("novo-aporte/{carteira}")
+    public NovoAporteOutput calcularNovoAporte(@RequestBody JsonNode body, @PathVariable("carteira") String carteira) {
+        double valor = body.get("valor").asDouble();
+        return service.calcularNovoAporte(valor, carteira);
     }
 
     @PostMapping("consolidar/{carteira}")

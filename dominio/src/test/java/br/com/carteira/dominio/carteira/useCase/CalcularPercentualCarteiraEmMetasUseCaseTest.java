@@ -34,11 +34,11 @@ class CalcularPercentualCarteiraEmMetasUseCaseTest {
         ativos.add(vale3);
         carteira.setAtivos(ativos);
         var resultado = useCase.executar(carteira);
-        Assertions.assertEquals(100.0, resultado.get(TipoAtivo.ACAO_NACIONAL.descricao()));
-        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.FII.descricao()));
-        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.CRYPTO.descricao()));
-        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.RENDA_FIXA.descricao()));
-        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.ACAO_INTERNACIONAL.descricao()));
+        Assertions.assertEquals(100.0, resultado.get(TipoAtivo.ACAO_NACIONAL.descricao()).percentual());
+        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.FII.descricao()).percentual());
+        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.CRYPTO.descricao()).percentual());
+        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.RENDA_FIXA.descricao()).percentual());
+        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.ACAO_INTERNACIONAL.descricao()).percentual());
 
         var tesouroNacional = new RendaFixa(
                 TipoAtivo.RENDA_FIXA,
@@ -53,11 +53,11 @@ class CalcularPercentualCarteiraEmMetasUseCaseTest {
         ativos.add(tesouroNacional);
         carteira.setAtivos(ativos);
         resultado = useCase.executar(carteira);
-        Assertions.assertEquals(96.7, resultado.get(TipoAtivo.RENDA_FIXA.descricao()));
-        Assertions.assertEquals(3.3, resultado.get(TipoAtivo.ACAO_NACIONAL.descricao()));
-        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.FII.descricao()));
-        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.CRYPTO.descricao()));
-        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.ACAO_INTERNACIONAL.descricao()));
+        Assertions.assertEquals(96.7, resultado.get(TipoAtivo.RENDA_FIXA.descricao()).percentual());
+        Assertions.assertEquals(3.3, resultado.get(TipoAtivo.ACAO_NACIONAL.descricao()).percentual());
+        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.FII.descricao()).percentual());
+        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.CRYPTO.descricao()).percentual());
+        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.ACAO_INTERNACIONAL.descricao()).percentual());
 
         var crypto = new RendaFixa(
                 TipoAtivo.CRYPTO,
@@ -72,11 +72,11 @@ class CalcularPercentualCarteiraEmMetasUseCaseTest {
         ativos.add(crypto);
         carteira.setAtivos(ativos);
         resultado = useCase.executar(carteira);
-        Assertions.assertEquals(81.0, resultado.get(TipoAtivo.RENDA_FIXA.descricao()));
-        Assertions.assertEquals(2.7, resultado.get(TipoAtivo.ACAO_NACIONAL.descricao()));
-        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.FII.descricao()));
-        Assertions.assertEquals(16.2, resultado.get(TipoAtivo.CRYPTO.descricao()));
-        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.ACAO_INTERNACIONAL.descricao()));
+        Assertions.assertEquals(81.0, resultado.get(TipoAtivo.RENDA_FIXA.descricao()).percentual());
+        Assertions.assertEquals(2.7, resultado.get(TipoAtivo.ACAO_NACIONAL.descricao()).percentual());
+        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.FII.descricao()).percentual());
+        Assertions.assertEquals(16.2, resultado.get(TipoAtivo.CRYPTO.descricao()).percentual());
+        Assertions.assertEquals(0.0, resultado.get(TipoAtivo.ACAO_INTERNACIONAL.descricao()).percentual());
     }
 
 }

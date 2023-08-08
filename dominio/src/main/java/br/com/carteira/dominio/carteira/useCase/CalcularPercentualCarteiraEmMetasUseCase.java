@@ -2,6 +2,7 @@ package br.com.carteira.dominio.carteira.useCase;
 
 import br.com.carteira.dominio.ativo.TipoAtivo;
 import br.com.carteira.dominio.carteira.Carteira;
+import br.com.carteira.dominio.carteira.useCase.records.AtivoComPercentualETotal;
 import br.com.carteira.dominio.metas.AtivoComPercentual;
 
 import java.util.HashMap;
@@ -13,7 +14,7 @@ import static br.com.carteira.dominio.Utils.arredondamentoPadrao;
 
 public class CalcularPercentualCarteiraEmMetasUseCase {
 
-    public Map<String, Double> executar(Carteira carteira) {
+    public Map<String, AtivoComPercentualETotal> executar(Carteira carteira) {
         if (Objects.isNull(carteira) || Objects.isNull(carteira.getMeta()))
             return Map.of();
 
@@ -40,15 +41,15 @@ public class CalcularPercentualCarteiraEmMetasUseCase {
                 })
                 .collect(Collectors.toSet());
 
-        HashMap<String, Double> map = new HashMap<>();
+        HashMap<String, AtivoComPercentualETotal> map = new HashMap<>();
         tipoAtivoComTotals.forEach(tipoAtivoComTotal -> {
             if (tipoAtivoComTotal.totalPorTipoAtivo == 0) {
-                map.put(tipoAtivoComTotal.tipoAtivo.descricao(), 0.0);
+                map.put(tipoAtivoComTotal.tipoAtivo.descricao(), new AtivoComPercentualETotal(tipoAtivoComTotal.tipoAtivo, 0.0, 0.0));
                 return;
             }
             var percentualDeCada = (tipoAtivoComTotal.totalPorTipoAtivo / totalCarteira) * 100;
             var percentaulArredondado = arredondamentoPadrao(percentualDeCada);
-            map.put(tipoAtivoComTotal.tipoAtivo.descricao(), percentaulArredondado);
+            map.put(tipoAtivoComTotal.tipoAtivo.descricao(), new AtivoComPercentualETotal(tipoAtivoComTotal.tipoAtivo, tipoAtivoComTotal.totalPorTipoAtivo, percentaulArredondado));
         });
 
         return map;
@@ -63,4 +64,5 @@ public class CalcularPercentualCarteiraEmMetasUseCase {
             this.totalPorTipoAtivo = totalPorTipoAtivo;
         }
     }
+
 }
