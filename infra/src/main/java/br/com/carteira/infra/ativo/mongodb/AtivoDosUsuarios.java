@@ -65,6 +65,10 @@ public class AtivoDosUsuarios {
         );
     }
 
+    public void aporte(Double quantidade) {
+        this.quantidade += quantidade;
+    }
+
     public void setImage(String image) {
         this.image = image;
     }

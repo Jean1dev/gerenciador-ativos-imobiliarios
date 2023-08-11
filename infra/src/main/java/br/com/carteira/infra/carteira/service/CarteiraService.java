@@ -5,7 +5,10 @@ import br.com.carteira.dominio.ativo.AtivoComTicker;
 import br.com.carteira.dominio.carteira.Carteira;
 import br.com.carteira.dominio.carteira.useCase.CalcularPercentualCarteiraEmMetasUseCase;
 import br.com.carteira.dominio.carteira.useCase.CriarEAtualizarCarteiraUserCase;
+import br.com.carteira.dominio.carteira.useCase.NovoAporteUseCase;
+import br.com.carteira.dominio.carteira.useCase.records.AtivoComPercentualETotal;
 import br.com.carteira.dominio.carteira.useCase.records.CriarOuAtualizarCarteiraInput;
+import br.com.carteira.dominio.carteira.useCase.records.NovoAporteOutput;
 import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuarios;
 import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuariosRepository;
 import br.com.carteira.infra.carteira.mongodb.CarteiraDocument;
@@ -66,12 +69,19 @@ public class CarteiraService {
         criarEAtualizarCarteiraUserCase.executar(input);
     }
 
-    public Map distribuicaoPorMeta(String idCarteira) {
+    public Map<String, AtivoComPercentualETotal> distribuicaoPorMeta(String idCarteira) {
         return carteiraRepository.findById(idCarteira)
                 .map(this::CarteiraDocumentToCarteiraFull)
                 .map(carteira -> new CalcularPercentualCarteiraEmMetasUseCase()
                         .executar(carteira))
                 .orElse(Map.of());
+    }
+
+    public NovoAporteOutput calcularNovoAporte(Double valor, String idCarteira) {
+        return carteiraRepository.findById(idCarteira)
+                .map(this::CarteiraDocumentToCarteiraFull)
+                .map(carteira -> new NovoAporteUseCase().execute(valor, carteira))
+                .orElseThrow();
     }
 
     private Carteira CarteiraDocumentToCarteiraFull(CarteiraDocument carteiraDocument) {

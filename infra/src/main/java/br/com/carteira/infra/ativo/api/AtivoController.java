@@ -3,7 +3,9 @@ package br.com.carteira.infra.ativo.api;
 import br.com.carteira.dominio.ativo.TipoAtivo;
 import br.com.carteira.dominio.ativo.useCase.GestaoAtivosUseCase;
 import br.com.carteira.dominio.ativo.useCase.records.AdicionarAtivoInput;
+import br.com.carteira.dominio.ativo.useCase.records.AportarAtivoInput;
 import br.com.carteira.dominio.ativo.useCase.records.AtualizarAtivoInput;
+import br.com.carteira.infra.ativo.service.AtivoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,11 +17,19 @@ import java.util.Map;
 public class AtivoController {
 
     @Autowired
-    public GestaoAtivosUseCase gestaoAtivosUseCase;
+    private GestaoAtivosUseCase gestaoAtivosUseCase;
+    @Autowired
+    private AtivoService ativoService;
+
+    @PostMapping("aportar")
+    public void novoAporte(@RequestBody AportarAtivoInput body) {
+        ativoService.aportar(body);
+    }
 
     @PutMapping
     public void atualizarAtivo(@RequestBody AtualizarAtivoInput body) {
         gestaoAtivosUseCase.atualizarAtivo(body);
+
     }
 
     @PostMapping

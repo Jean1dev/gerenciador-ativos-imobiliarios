@@ -2,6 +2,7 @@ package br.com.carteira.infra.ativo.api;
 
 import br.com.carteira.dominio.ativo.TipoAtivo;
 import br.com.carteira.dominio.ativo.useCase.records.AdicionarAtivoInput;
+import br.com.carteira.dominio.ativo.useCase.records.AportarAtivoInput;
 import br.com.carteira.dominio.ativo.useCase.records.AtualizarAtivoInput;
 import br.com.carteira.dominio.criterios.Criterio;
 import br.com.carteira.infra.E2ETests;
@@ -42,6 +43,37 @@ class AtivoControllerTest extends E2ETests {
     @DynamicPropertySource
     public static void mongoDbProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.data.mongodb.uri", MONGO_CONTAINER::getReplicaSetUrl);
+    }
+
+    @Test
+    @DisplayName("deve aportar em um ativo")
+    public void deveAportar() throws Exception {
+        var idCarteira = carteiraRepository.save(new CarteiraDocument(null, "teste22", null, null, 1)).getId();
+        var idAtivo = ativoDosUsuariosRepository.save(new AtivoDosUsuarios(
+                null,
+                idCarteira,
+                null,
+                null,
+                0,
+                0,
+                0,
+                0.0,
+                0.0,
+                "String ticker",
+                null,
+                null)).getId();
+
+        final var input = new AportarAtivoInput(idAtivo, 5.0);
+        final var request = post("/ativo/aportar")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(input));
+
+        this.mvc.perform(request)
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        var ativoDosUsuarios = ativoDosUsuariosRepository.findById(idAtivo).orElseThrow();
+        assertEquals(5.0, ativoDosUsuarios.getQuantidade());
     }
 
     @Test
