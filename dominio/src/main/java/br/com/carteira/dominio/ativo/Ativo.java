@@ -71,10 +71,6 @@ public abstract class Ativo {
         if (quantidade < 0) {
             throw new DominioException("Quantidade não pode ser menor que zero");
         }
-
-        if (nota < 0) {
-            throw new DominioException("Nota não pode ser menor que zero");
-        }
     }
 
     public TipoAtivo getTipoAtivo() {

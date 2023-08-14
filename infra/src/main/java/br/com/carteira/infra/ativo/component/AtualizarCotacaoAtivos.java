@@ -1,5 +1,7 @@
 package br.com.carteira.infra.ativo.component;
 
+import br.com.carteira.dominio.ativo.TipoAtivo;
+import br.com.carteira.infra.ativo.mongodb.AtivoComCotacao;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacaoRepository;
 import br.com.carteira.infra.integracoes.BMFBovespa;
 import org.slf4j.Logger;
@@ -38,13 +40,22 @@ public class AtualizarCotacaoAtivos {
 
             return false;
         }).forEach(ativoComCotacao -> {
-            log.info(ativoComCotacao.getTicker());
-            var cotacao = bmfBovespa.getCotacao(ativoComCotacao.getTicker() + ".SAO");
+            var ticker = getTickerParaPesquisa(ativoComCotacao);
+            log.info(ticker);
+            var cotacao = bmfBovespa.getCotacao(ticker);
             if (cotacao != null) {
-                log.info(String.format("atualizando %s para %s", ativoComCotacao.getTicker(), cotacao.valor()));
+                log.info(String.format("atualizando %s para %s", ticker, cotacao.valor()));
                 ativoComCotacao.atualizarValor(cotacao.valor());
                 ativoComCotacaoRepository.save(ativoComCotacao);
             }
         });
+    }
+
+    private String getTickerParaPesquisa(AtivoComCotacao ativoComCotacao) {
+        if (TipoAtivo.ACAO_NACIONAL.equals(ativoComCotacao.getTipoAtivo())) {
+            return ativoComCotacao.getTicker() + ".SAO";
+        }
+
+        return ativoComCotacao.getTicker();
     }
 }
