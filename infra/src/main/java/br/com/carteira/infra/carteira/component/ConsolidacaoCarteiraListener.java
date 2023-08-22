@@ -50,6 +50,7 @@ public class ConsolidacaoCarteiraListener {
                 .stream().map(AtivoComTicker::getTicker)
                 .toList();
 
+        log.info("Quantidade de ativos " + tickersList.size());
         List<String> tickersJaMonitorados = new ArrayList<>();
 
         // TODO:: REFATORAR PARA FAZER TODAS AS OPERACOES EM LISTA
@@ -63,7 +64,7 @@ public class ConsolidacaoCarteiraListener {
                     .ifPresentOrElse(
                             ativoDosUsuarios -> {
                                 calcularEAtualizarAtivoDoUsuario(ativoDosUsuarios, valorAtual, carteira);
-                                ativoDosUsuarios.setImage(ativoDosUsuarios.getImage());
+                                ativoDosUsuarios.setImage(ativoComCotacao.getImage());
                                 ativoDosUsuariosRepository.save(ativoDosUsuarios);
                             },
                             () -> {
