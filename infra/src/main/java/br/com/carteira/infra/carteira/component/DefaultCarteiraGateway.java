@@ -104,7 +104,7 @@ public class DefaultCarteiraGateway implements CarteiraGateway {
                 ativoSimplificado.tipoAtivo(),
                 ativoSimplificado.papel(),
                 0,
-                0,
+                ativoSimplificado.valor(),
                 ativoSimplificado.nota(),
                 0,
                 ativoSimplificado.quantidade(),

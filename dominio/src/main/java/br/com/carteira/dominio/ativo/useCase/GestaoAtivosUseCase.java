@@ -57,7 +57,9 @@ public class GestaoAtivosUseCase {
                         input.tipoAtivo(),
                         input.nome(),
                         input.quantidade(),
-                        input.nota()
+                        input.nota(),
+                        null,
+                        input.valorAtual()
                 ));
     }
 
