@@ -2,6 +2,8 @@ package br.com.carteira.infra.integracoes.impl;
 
 import br.com.carteira.infra.integracoes.BMFBovespa;
 import br.com.carteira.infra.integracoes.CotacaoDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -11,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 
 public class Aplhavante implements BMFBovespa {
+    private static final Logger log = LoggerFactory.getLogger(Aplhavante.class);
 
     private final RestTemplate restTemplate;
     @Value("{api.vhantage.key}")
@@ -40,9 +43,9 @@ public class Aplhavante implements BMFBovespa {
                     return new CotacaoDto(alphavanteGetQuotaResponse.getGlobalQuote().getPrice());
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            //throw new RuntimeException(e.getMessage());
-
+            log.error(e.getMessage(), e);
+            log.error(e.getLocalizedMessage());
+            log.info("Nao foi possivel atualizar a cotacao " + ticker);
         }
 
         return null;

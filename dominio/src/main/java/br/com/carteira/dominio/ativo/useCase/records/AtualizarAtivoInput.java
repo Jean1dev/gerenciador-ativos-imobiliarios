@@ -8,6 +8,10 @@ public record AtualizarAtivoInput(
         Double quantidade,
         Integer nota,
         String identificacao,
-        List<Criterio> criterios
+        List<Criterio> criterios,
+        Double valor
 ) {
+    public AtualizarAtivoInput(double quantidade, int nota, String idAtivo, List<Criterio> criterios) {
+        this(quantidade, nota, idAtivo, criterios, null);
+    }
 }

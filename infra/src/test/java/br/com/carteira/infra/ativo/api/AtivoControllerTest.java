@@ -77,6 +77,50 @@ class AtivoControllerTest extends E2ETests {
     }
 
     @Test
+    @DisplayName("deve atualizar o valor de um ativo")
+    public void deveAtualizarValor() throws Exception {
+        var idCarteira = carteiraRepository.save(new CarteiraDocument(null, "teste222", null, null, 1)).getId();
+        var idAtivo = ativoDosUsuariosRepository.save(new AtivoDosUsuarios(
+                null,
+                idCarteira,
+                TipoAtivo.RENDA_FIXA,
+                null,
+                0,
+                0,
+                0,
+                0.0,
+                0.0,
+                "Tesouro nacional",
+                null,
+                null)).getId();
+
+        final var input = new AtualizarAtivoInput(
+                1.0,
+                5,
+                idAtivo,
+                List.of(new Criterio("FAKE", "FAKE")),
+                150.0
+        );
+
+        final var request = put("/ativo")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(input));
+
+        this.mvc.perform(request)
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        var ativoDosUsuarios = ativoDosUsuariosRepository.findById(idAtivo).orElseThrow();
+        var criterio = ativoDosUsuarios.getCriterios().get(0);
+        assertEquals("FAKE", criterio.getCriterio());
+        assertEquals("FAKE", criterio.getPergunta());
+        assertEquals(false, criterio.getSimOuNao());
+        assertEquals(1.0, ativoDosUsuarios.getQuantidade());
+        assertEquals(5, ativoDosUsuarios.getNota());
+        assertEquals(150.0, ativoDosUsuarios.getValorAtual());
+    }
+
+    @Test
     @DisplayName("Deve atualizar um ativo")
     public void deveAtualizarAtivo() throws Exception {
         var idCarteira = carteiraRepository.save(new CarteiraDocument(null, "teste22", null, null, 1)).getId();
@@ -116,6 +160,7 @@ class AtivoControllerTest extends E2ETests {
         assertEquals(false, criterio.getSimOuNao());
         assertEquals(1.0, ativoDosUsuarios.getQuantidade());
         assertEquals(5, ativoDosUsuarios.getNota());
+        assertEquals(0, ativoDosUsuarios.getValorAtual());
     }
 
     @Test
@@ -145,6 +190,39 @@ class AtivoControllerTest extends E2ETests {
                 .andExpect(status().isOk());
 
         assertEquals(1, carteiraRepository.findById(idCarteira).get().getQuantidadeAtivos());
+    }
+
+    @Test
+    @DisplayName("Deve adicionar uma ativo Renda fixa e salvar o valor dele")
+    public void rendaFixa() throws Exception {
+        var idCarteira = carteiraRepository.save(new CarteiraDocument(null, "teste", null, null, 0)).getId();
+        var ativoInput = new AdicionarAtivoInput(
+                TipoAtivo.RENDA_FIXA,
+                5,
+                10000.0,
+                "TESOURO NACIONAL",
+                "TESOURO PRE-FIXADO",
+                1.0,
+                "TESOURO PRE-FIXADO",
+                idCarteira,
+                null
+        );
+
+        this.mvc.perform(post("/ativo")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("user", "user")
+                        .header("email", "email")
+                        .content(mapper.writeValueAsString(ativoInput)))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        double valorAtual = ativoDosUsuariosRepository.findAll()
+                .stream().filter(ativoDosUsuarios -> ativoDosUsuarios.getTicker().equals("TESOURO PRE-FIXADO"))
+                .findFirst()
+                .orElseThrow()
+                .getValorAtual();
+
+        assertEquals(10000.0, valorAtual);
     }
 
     @Test

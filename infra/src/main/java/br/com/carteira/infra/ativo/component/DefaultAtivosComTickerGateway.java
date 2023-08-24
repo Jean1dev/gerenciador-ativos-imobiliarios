@@ -9,6 +9,7 @@ import br.com.carteira.infra.ativo.mongodb.AtivoComCotacaoRepository;
 import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuariosRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -42,6 +43,9 @@ public class DefaultAtivosComTickerGateway implements AtivosComTickerGateway {
         ativoDosUsuarios.setNota(input.nota());
         ativoDosUsuarios.setQuantidade(input.quantidade());
         ativoDosUsuarios.setCriterios(input.criterios());
+        if (Objects.nonNull(input.valor()))
+            ativoDosUsuarios.setValorAtual(input.valor());
+
         ativoDosUsuariosRepository.save(ativoDosUsuarios);
     }
 }
