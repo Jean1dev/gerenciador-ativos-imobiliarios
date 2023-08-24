@@ -40,7 +40,7 @@ public class GestaoAtivosUseCase {
         if (isAtivoComticker(input)) {
             adicionarAtivoComTicker(carteira, new AtivoSimplificado(
                     input.tipoAtivo(),
-                    input.nome().toUpperCase(),
+                    input.nome().toUpperCase().trim(),
                     input.quantidade(),
                     input.nota(),
                     input.criterios()
