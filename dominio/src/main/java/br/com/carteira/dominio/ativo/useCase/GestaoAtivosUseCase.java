@@ -62,7 +62,7 @@ public class GestaoAtivosUseCase {
                         input.quantidade(),
                         nota,
                         null,
-                        input.valorAtual()
+                        (double) nullOrValue(input.valorAtual(), 0.0)
                 ));
     }
 

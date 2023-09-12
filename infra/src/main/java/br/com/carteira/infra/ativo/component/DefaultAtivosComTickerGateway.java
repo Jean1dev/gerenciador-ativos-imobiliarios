@@ -40,9 +40,15 @@ public class DefaultAtivosComTickerGateway implements AtivosComTickerGateway {
     @Override
     public void atualizarAtivo(AtualizarAtivoInput input) {
         var ativoDosUsuarios = ativoDosUsuariosRepository.findById(input.identificacao()).orElseThrow();
-        ativoDosUsuarios.setNota(input.nota());
-        ativoDosUsuarios.setQuantidade(input.quantidade());
-        ativoDosUsuarios.setCriterios(input.criterios());
+        if (Objects.nonNull(input.nota()))
+            ativoDosUsuarios.setNota(input.nota());
+
+        if (Objects.nonNull(input.quantidade()))
+            ativoDosUsuarios.setQuantidade(input.quantidade());
+
+        if (Objects.nonNull(input.criterios()))
+            ativoDosUsuarios.setCriterios(input.criterios());
+
         if (Objects.nonNull(input.valor()))
             ativoDosUsuarios.setValorAtual(input.valor());
 
