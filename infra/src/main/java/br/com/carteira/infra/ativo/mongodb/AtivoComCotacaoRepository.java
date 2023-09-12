@@ -10,6 +10,8 @@ public interface AtivoComCotacaoRepository extends MongoRepository<AtivoComCotac
 
     List<AtivoComCotacao> findAllByTickerIn(List<String> tickerList);
 
+    List<AtivoComCotacao> findAllByTickerContaining(String query);
+
     Optional<AtivoComCotacao> findByTicker(String ticker);
 
     @Query("{'image': null}")

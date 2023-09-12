@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -20,6 +21,11 @@ public class AtivoController {
     private GestaoAtivosUseCase gestaoAtivosUseCase;
     @Autowired
     private AtivoService ativoService;
+
+    @GetMapping("sugestao")
+    public List<String> buscarSugestao(@RequestParam("query") String query) {
+        return ativoService.suggesty(query);
+    }
 
     @PostMapping("aportar")
     public void novoAporte(@RequestBody AportarAtivoInput body) {

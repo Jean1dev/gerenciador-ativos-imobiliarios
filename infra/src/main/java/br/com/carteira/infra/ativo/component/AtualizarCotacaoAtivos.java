@@ -28,27 +28,32 @@ public class AtualizarCotacaoAtivos {
     @Async
     public void run() {
         log.info("iniciando processo de atualizacao de ativos");
-        final var now = LocalDate.now();
-        ativoComCotacaoRepository.findAll().stream().filter(ativoComCotacao -> {
-            if (ativoComCotacao.getValor() == 0) {
-                return true;
-            }
+        ativoComCotacaoRepository.findAll()
+                .stream()
+                .filter(this::deveAtualizar)
+                .parallel()
+                .forEach(ativoComCotacao -> {
+                    var ticker = getTickerParaPesquisa(ativoComCotacao);
+                    log.info(ticker);
+                    atualizarCotacao(ticker, ativoComCotacao);
+                });
+    }
 
-            if (now.isAfter(ativoComCotacao.getUltimaAtualizacao().toLocalDate())) {
-                return true;
-            }
+    private void atualizarCotacao(String ticker, AtivoComCotacao ativoComCotacao) {
+        var cotacao = bmfBovespa.getCotacao(ticker);
+        if (cotacao != null) {
+            log.info(String.format("atualizando %s para %s", ticker, cotacao.valor()));
+            ativoComCotacao.atualizarValor(cotacao.valor());
+            ativoComCotacaoRepository.save(ativoComCotacao);
+        }
+    }
 
-            return false;
-        }).forEach(ativoComCotacao -> {
-            var ticker = getTickerParaPesquisa(ativoComCotacao);
-            log.info(ticker);
-            var cotacao = bmfBovespa.getCotacao(ticker);
-            if (cotacao != null) {
-                log.info(String.format("atualizando %s para %s", ticker, cotacao.valor()));
-                ativoComCotacao.atualizarValor(cotacao.valor());
-                ativoComCotacaoRepository.save(ativoComCotacao);
-            }
-        });
+    private boolean deveAtualizar(AtivoComCotacao ativoComCotacao) {
+        if (ativoComCotacao.getValor() == 0) {
+            return true;
+        }
+
+        return LocalDate.now().isAfter(ativoComCotacao.getUltimaAtualizacao().toLocalDate());
     }
 
     private String getTickerParaPesquisa(AtivoComCotacao ativoComCotacao) {

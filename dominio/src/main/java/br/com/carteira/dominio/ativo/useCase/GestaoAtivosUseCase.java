@@ -12,6 +12,8 @@ import br.com.carteira.dominio.exception.DominioException;
 import java.util.Objects;
 import java.util.Set;
 
+import static br.com.carteira.dominio.Utils.nullOrValue;
+
 public class GestaoAtivosUseCase {
 
     private final CarteiraGateway carteiraGateway;
@@ -36,13 +38,14 @@ public class GestaoAtivosUseCase {
 
     public void adicionar(AdicionarAtivoInput input) {
         Objects.requireNonNull(input.tipoAtivo(), "Tipo ativo não pode ser null");
+        var nota = (Integer) nullOrValue(input.nota(), 0);
         Carteira carteira = carteiraGateway.buscarCarteiraPeloId(input.identificacaoCarteira());
         if (isAtivoComticker(input)) {
             adicionarAtivoComTicker(carteira, new AtivoSimplificado(
                     input.tipoAtivo(),
                     input.nome().toUpperCase().trim(),
                     input.quantidade(),
-                    input.nota(),
+                    nota,
                     input.criterios()
             ));
             carteira.setQuantidadeAtivos(carteira.getQuantidadeAtivos() + 1);
@@ -57,7 +60,7 @@ public class GestaoAtivosUseCase {
                         input.tipoAtivo(),
                         input.nome(),
                         input.quantidade(),
-                        input.nota(),
+                        nota,
                         null,
                         input.valorAtual()
                 ));

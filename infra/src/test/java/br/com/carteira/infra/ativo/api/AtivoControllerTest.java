@@ -6,6 +6,8 @@ import br.com.carteira.dominio.ativo.useCase.records.AportarAtivoInput;
 import br.com.carteira.dominio.ativo.useCase.records.AtualizarAtivoInput;
 import br.com.carteira.dominio.criterios.Criterio;
 import br.com.carteira.infra.E2ETests;
+import br.com.carteira.infra.ativo.mongodb.AtivoComCotacao;
+import br.com.carteira.infra.ativo.mongodb.AtivoComCotacaoRepository;
 import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuarios;
 import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuariosRepository;
 import br.com.carteira.infra.carteira.mongodb.CarteiraDocument;
@@ -16,8 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import org.testcontainers.utility.DockerImageName;
 
 import java.util.List;
@@ -36,6 +40,8 @@ class AtivoControllerTest extends E2ETests {
     public CarteiraRepository carteiraRepository;
     @Autowired
     private AtivoDosUsuariosRepository ativoDosUsuariosRepository;
+    @Autowired
+    private AtivoComCotacaoRepository ativoComCotacaoRepository;
 
     @Container
     public static MongoDBContainer MONGO_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:6.0.5"));
@@ -43,6 +49,41 @@ class AtivoControllerTest extends E2ETests {
     @DynamicPropertySource
     public static void mongoDbProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.data.mongodb.uri", MONGO_CONTAINER::getReplicaSetUrl);
+    }
+
+    @Test
+    @DisplayName("Deve trazer uma lista de sugestao de ativos")
+    public void sugestao() throws Exception {
+        ativoComCotacaoRepository.save(AtivoComCotacao.criarCotacao("PETR4", TipoAtivo.ACAO_NACIONAL));
+        ativoComCotacaoRepository.save(AtivoComCotacao.criarCotacao("PETR3", TipoAtivo.ACAO_NACIONAL));
+        ativoComCotacaoRepository.save(AtivoComCotacao.criarCotacao("KLBN11", TipoAtivo.ACAO_NACIONAL));
+        ativoComCotacaoRepository.save(AtivoComCotacao.criarCotacao("XPML11", TipoAtivo.FII));
+        ativoComCotacaoRepository.save(AtivoComCotacao.criarCotacao("AAPL", TipoAtivo.ACAO_INTERNACIONAL));
+        final var request = get("/ativo/sugestao")
+                .queryParam("query", "PE")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var response = this.mvc.perform(request)
+                .andDo(print());
+
+        var mapper = new ObjectMapper();
+        MvcResult mvcResult = response.andExpect(status().isOk()).andReturn();
+        List<String> readValue = mapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
+        assertEquals(2, readValue.size());
+        assertTrue(readValue.contains("PETR3"));
+        assertTrue(readValue.contains("PETR4"));
+
+        final var request2 = get("/ativo/sugestao")
+                .queryParam("query", "a")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var response2 = this.mvc.perform(request2)
+                .andDo(print());
+
+        mvcResult = response2.andExpect(status().isOk()).andReturn();
+        readValue = mapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
+        assertEquals(1, readValue.size());
+        assertTrue(readValue.contains("AAPL"));
     }
 
     @Test
