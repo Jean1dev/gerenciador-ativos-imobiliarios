@@ -11,16 +11,22 @@ import br.com.carteira.dominio.carteira.useCase.records.CriarOuAtualizarCarteira
 import br.com.carteira.dominio.carteira.useCase.records.NovoAporteOutput;
 import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuarios;
 import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuariosRepository;
+import br.com.carteira.infra.carteira.api.MeusAtivosFilter;
 import br.com.carteira.infra.carteira.mongodb.CarteiraDocument;
 import br.com.carteira.infra.carteira.mongodb.CarteiraRepository;
 import br.com.carteira.infra.usuario.service.UsuarioService;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static br.com.carteira.dominio.Utils.nullOrValue;
 
 @Service
 public class CarteiraService {
@@ -56,8 +62,15 @@ public class CarteiraService {
         ativoDosUsuariosRepository.deleteAllByCarteiraRef(carteiraId);
     }
 
-    public List<AtivoDosUsuarios> meusAtivos(String carteiraRef) {
-        return ativoDosUsuariosRepository.findAllByCarteiraRef(carteiraRef);
+    public Page<AtivoDosUsuarios> meusAtivos(PageRequest pageRequest, MeusAtivosFilter filter) {
+        var carteiras = filter.getCarteiras();
+        var tipos = (List<String>) nullOrValue(filter.getTipos(), Collections.emptyList());
+        // TODO:: so permitir buscar ativos da carteira do usuario do request
+
+        if (tipos.isEmpty())
+            return ativoDosUsuariosRepository.findAllByCarteiraRefIn(carteiras, pageRequest);
+
+        return ativoDosUsuariosRepository.findAllByCarteiraRefInAndTipoAtivoIn(carteiras, tipos, pageRequest);
     }
 
     public List<CarteiraDocument> minhasCarteiras(String userName, String email) {

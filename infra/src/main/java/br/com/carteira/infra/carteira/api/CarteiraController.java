@@ -8,13 +8,13 @@ import br.com.carteira.dominio.metas.MetaDefinida;
 import br.com.carteira.infra.carteira.api.presenters.AtivoDosUsuariosListagemPresent;
 import br.com.carteira.infra.carteira.api.presenters.CarteiraDocumentPresent;
 import br.com.carteira.infra.carteira.service.CarteiraService;
+import br.com.carteira.infra.exceptions.ApplicationException;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("carteira")
@@ -49,9 +49,18 @@ public class CarteiraController {
         service.deletarCarteira(carteiraId);
     }
 
-    @GetMapping("meus-ativos/{carteira}")
-    public List<AtivoDosUsuariosListagemPresent> meusAtivos(@PathVariable("carteira") String carteiraRef) {
-        return AtivoDosUsuariosListagemPresent.present(service.meusAtivos(carteiraRef));
+    @GetMapping("meus-ativos")
+    public Page<AtivoDosUsuariosListagemPresent> meusAtivos(
+            MeusAtivosFilter filter,
+            @RequestParam(value = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) int size
+    ) {
+        if (Objects.isNull(filter.getCarteiras()) || filter.getCarteiras().isEmpty()) {
+            throw new ApplicationException("MeusAtivosFilter esta incorreto");
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return AtivoDosUsuariosListagemPresent.presents(service.meusAtivos(pageRequest, filter));
     }
 
     @PostMapping

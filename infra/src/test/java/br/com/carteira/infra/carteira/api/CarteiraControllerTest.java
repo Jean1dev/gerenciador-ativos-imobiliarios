@@ -5,7 +5,9 @@ import br.com.carteira.dominio.carteira.useCase.records.AtivoSimplificado;
 import br.com.carteira.dominio.carteira.useCase.records.CriarOuAtualizarCarteiraInput;
 import br.com.carteira.dominio.metas.MetaDefinida;
 import br.com.carteira.infra.E2ETests;
+import br.com.carteira.infra.ativo.AtivoDosUsuariosFactory;
 import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuariosRepository;
+import br.com.carteira.infra.carteira.mongodb.CarteiraRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +24,7 @@ import org.testcontainers.utility.DockerImageName;
 import java.util.Collection;
 import java.util.List;
 
+import static br.com.carteira.infra.carteira.CarteiraFactory.carteiraDocument;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,6 +41,8 @@ class CarteiraControllerTest extends E2ETests {
 
     @Autowired
     private AtivoDosUsuariosRepository ativoDosUsuariosRepository;
+    @Autowired
+    private CarteiraRepository carteiraRepository;
 
     @Container
     public static MongoDBContainer MONGO_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:6.0.5"));
@@ -172,6 +177,64 @@ class CarteiraControllerTest extends E2ETests {
                 .andExpect(jsonPath("$[0].id", instanceOf(String.class)))
                 .andExpect(jsonPath("$[0].nome").value("nome"))
                 .andExpect(jsonPath("$[0].quantidadeAtivos").value(0));
+    }
+
+    @Test
+    @DisplayName("Deve buscar meus ativos nas carteiras")
+    public void deveBuscarAtivosCertos() throws Exception {
+        var carteira1 = carteiraRepository.save(carteiraDocument()).getId();
+        var carteira2 = carteiraRepository.save(carteiraDocument()).getId();
+        ativoDosUsuariosRepository.save(AtivoDosUsuariosFactory.simples(carteira1, TipoAtivo.ACAO_NACIONAL));
+        ativoDosUsuariosRepository.save(AtivoDosUsuariosFactory.simples(carteira1, TipoAtivo.RENDA_FIXA));
+        ativoDosUsuariosRepository.save(AtivoDosUsuariosFactory.simples(carteira2, TipoAtivo.ACAO_NACIONAL));
+
+        var requestBuilder = get("/carteira/meus-ativos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("user", "user")
+                .param("email", "email")
+                .param("carteiras", carteira1);
+
+        var response = this.mvc.perform(requestBuilder)
+                .andDo(print());
+
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", instanceOf(List.class)))
+                .andExpect(jsonPath("$.size").value(10))
+                .andExpect(jsonPath("$.pageable.pageNumber").value(0))
+                .andExpect(jsonPath("$.numberOfElements").value(2));
+
+        requestBuilder = get("/carteira/meus-ativos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("user", "user")
+                .param("email", "email")
+                .param("size", String.valueOf(100))
+                .param("carteiras", carteira1, carteira2);
+
+        response = this.mvc.perform(requestBuilder)
+                .andDo(print());
+
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", instanceOf(List.class)))
+                .andExpect(jsonPath("$.size").value(100))
+                .andExpect(jsonPath("$.pageable.pageNumber").value(0))
+                .andExpect(jsonPath("$.numberOfElements").value(3));
+
+        requestBuilder = get("/carteira/meus-ativos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("user", "user")
+                .param("email", "email")
+                .param("size", String.valueOf(100))
+                .param("tipos", TipoAtivo.RENDA_FIXA.toString())
+                .param("carteiras", carteira1, carteira2);
+
+        response = this.mvc.perform(requestBuilder)
+                .andDo(print());
+
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", instanceOf(List.class)))
+                .andExpect(jsonPath("$.size").value(100))
+                .andExpect(jsonPath("$.pageable.pageNumber").value(0))
+                .andExpect(jsonPath("$.numberOfElements").value(1));
     }
 
 }

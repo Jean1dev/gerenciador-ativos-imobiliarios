@@ -1,6 +1,8 @@
 package br.com.carteira.infra.carteira.api.presenters;
 
 import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuarios;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.io.Serializable;
 import java.util.List;
@@ -46,6 +48,11 @@ public final class AtivoDosUsuariosListagemPresent implements Serializable {
                 ativoDosUsuarios.getImage(),
                 ativoDosUsuarios.getValorAtual()
         );
+    }
+
+    public static Page<AtivoDosUsuariosListagemPresent> presents(final Page<AtivoDosUsuarios> page) {
+        var presented = AtivoDosUsuariosListagemPresent.present(page.getContent());
+        return new PageImpl<>(presented, page.getPageable(), page.getTotalElements());
     }
 
     public static List<AtivoDosUsuariosListagemPresent> present(final List<AtivoDosUsuarios> ativoDosUsuarios) {
