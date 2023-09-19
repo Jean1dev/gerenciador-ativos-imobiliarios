@@ -41,7 +41,7 @@ public class AtualizarCotacaoAtivos {
                     var ticker = getTickerParaPesquisa(ativoComCotacao);
                     log.info(ticker);
                     return atualizarCotacao(ticker, ativoComCotacao);
-                }).collect(Collectors.joining());
+                }).collect(Collectors.joining(System.lineSeparator()));
 
         evidenciarResultado(collected);
     }
@@ -73,7 +73,7 @@ public class AtualizarCotacaoAtivos {
             return message;
         }
 
-        return "Nao foi possivel atualizar " + cotacao;
+        return "Nao foi possivel atualizar " + ticker;
     }
 
     private boolean deveAtualizar(AtivoComCotacao ativoComCotacao) {
