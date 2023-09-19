@@ -70,7 +70,7 @@ public class AtivoComCotacao {
 
     public void atualizarValor(Double valor) {
         this.valor = valor;
-        this.ultimaAtualizacao = LocalDateTime.now();
+        this.ultimaAtualizacao = LocalDateTime.now().plusDays(7);
     }
 
     public String getImage() {
