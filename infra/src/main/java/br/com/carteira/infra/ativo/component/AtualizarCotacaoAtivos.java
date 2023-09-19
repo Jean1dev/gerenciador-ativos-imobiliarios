@@ -4,6 +4,8 @@ import br.com.carteira.dominio.ativo.TipoAtivo;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacao;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacaoRepository;
 import br.com.carteira.infra.integracoes.BMFBovespa;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -24,10 +26,12 @@ public class AtualizarCotacaoAtivos {
 
     private final BMFBovespa bmfBovespa;
     private final AtivoComCotacaoRepository ativoComCotacaoRepository;
+    private final ObjectMapper mapper;
 
-    public AtualizarCotacaoAtivos(BMFBovespa bmfBovespa, AtivoComCotacaoRepository ativoComCotacaoRepository) {
+    public AtualizarCotacaoAtivos(BMFBovespa bmfBovespa, AtivoComCotacaoRepository ativoComCotacaoRepository, ObjectMapper mapper) {
         this.bmfBovespa = bmfBovespa;
         this.ativoComCotacaoRepository = ativoComCotacaoRepository;
+        this.mapper = mapper;
     }
 
     @Async
@@ -55,12 +59,16 @@ public class AtualizarCotacaoAtivos {
         var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        String jsonBody = String.format("{\"to\": \"jeanlucafp@gmail.com\", \"subject\": \"Resultado atualizacao ativos\", \"message\": \"%s\"}", collected);
-        var requestEntity = new HttpEntity<>(jsonBody, headers);
+        try {
+            var jsonBody = mapper.writeValueAsString(new EnviarEmailPayload("jeanlucafp@gmail.com", "Resultado atualizacao ativos", collected));
+            var requestEntity = new HttpEntity<>(jsonBody, headers);
 
-        var responseEntity = restTemplate.postForEntity(url, requestEntity, String.class);
+            var responseEntity = restTemplate.postForEntity(url, requestEntity, String.class);
 
-        log.info(String.format("Server response %s", responseEntity.getBody()));
+            log.info(String.format("Server response %s", responseEntity.getBody()));
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     private String atualizarCotacao(String ticker, AtivoComCotacao ativoComCotacao) {
