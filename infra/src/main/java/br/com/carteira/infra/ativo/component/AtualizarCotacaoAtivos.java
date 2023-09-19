@@ -47,6 +47,8 @@ public class AtualizarCotacaoAtivos {
     }
 
     private void evidenciarResultado(String collected) {
+        if (collected.isBlank())
+            return;
         var url = "https://communication-service-4f4f57e0a956.herokuapp.com/email";
         var restTemplate = new RestTemplate();
 
@@ -64,14 +66,14 @@ public class AtualizarCotacaoAtivos {
     private String atualizarCotacao(String ticker, AtivoComCotacao ativoComCotacao) {
         var cotacao = bmfBovespa.getCotacao(ticker);
         if (cotacao != null) {
-            var message = String.format("atualizado %s para %s \n", ticker, cotacao.valor());
+            var message = String.format("atualizado %s para %s", ticker, cotacao.valor());
             log.info(message);
             ativoComCotacao.atualizarValor(cotacao.valor());
             ativoComCotacaoRepository.save(ativoComCotacao);
             return message;
         }
 
-        return "\n Nao foi possivel atualizar " + cotacao;
+        return "Nao foi possivel atualizar " + cotacao;
     }
 
     private boolean deveAtualizar(AtivoComCotacao ativoComCotacao) {
