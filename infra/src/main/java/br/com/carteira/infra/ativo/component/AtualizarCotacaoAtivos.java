@@ -6,11 +6,16 @@ import br.com.carteira.infra.ativo.mongodb.AtivoComCotacaoRepository;
 import br.com.carteira.infra.integracoes.BMFBovespa;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.util.stream.Collectors;
 
 @Component
 @EnableAsync
@@ -28,24 +33,45 @@ public class AtualizarCotacaoAtivos {
     @Async
     public void run() {
         log.info("iniciando processo de atualizacao de ativos");
-        ativoComCotacaoRepository.findAll()
+        String collected = ativoComCotacaoRepository.findAll()
                 .stream()
                 .filter(this::deveAtualizar)
                 .parallel()
-                .forEach(ativoComCotacao -> {
+                .map(ativoComCotacao -> {
                     var ticker = getTickerParaPesquisa(ativoComCotacao);
                     log.info(ticker);
-                    atualizarCotacao(ticker, ativoComCotacao);
-                });
+                    return atualizarCotacao(ticker, ativoComCotacao);
+                }).collect(Collectors.joining());
+
+        evidenciarResultado(collected);
     }
 
-    private void atualizarCotacao(String ticker, AtivoComCotacao ativoComCotacao) {
+    private void evidenciarResultado(String collected) {
+        var url = "https://communication-service-4f4f57e0a956.herokuapp.com/email";
+        var restTemplate = new RestTemplate();
+
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        String jsonBody = String.format("{\"to\": \"jeanlucafp@gmail.com\", \"subject\": \"Resultado atualizacao ativos\", \"message\": \"%s\"}", collected);
+        var requestEntity = new HttpEntity<>(jsonBody, headers);
+
+        var responseEntity = restTemplate.postForEntity(url, requestEntity, String.class);
+
+        log.info(String.format("Server response %s", responseEntity.getBody()));
+    }
+
+    private String atualizarCotacao(String ticker, AtivoComCotacao ativoComCotacao) {
         var cotacao = bmfBovespa.getCotacao(ticker);
         if (cotacao != null) {
-            log.info(String.format("atualizando %s para %s", ticker, cotacao.valor()));
+            var message = String.format("atualizado %s para %s \n", ticker, cotacao.valor());
+            log.info(message);
             ativoComCotacao.atualizarValor(cotacao.valor());
             ativoComCotacaoRepository.save(ativoComCotacao);
+            return message;
         }
+
+        return "\n Nao foi possivel atualizar " + cotacao;
     }
 
     private boolean deveAtualizar(AtivoComCotacao ativoComCotacao) {
