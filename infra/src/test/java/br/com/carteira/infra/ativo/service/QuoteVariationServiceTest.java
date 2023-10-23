@@ -16,12 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @DisplayName("QuoteVariationService")
 class QuoteVariationServiceTest extends E2ETests {
-    @Container
-    public static MongoDBContainer MONGO_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:6.0.5"));
-
-
     @Autowired
     private QuoteVariationService service;
+    @Container
+    public static MongoDBContainer MONGO_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:6.0.5"));
 
     @Test
     @DisplayName("Deve trazer uma lista de cotacoes")
