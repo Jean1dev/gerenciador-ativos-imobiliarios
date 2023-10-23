@@ -2,6 +2,7 @@ package br.com.carteira.infra.ativo.service;
 
 import br.com.carteira.infra.ativo.api.dto.QuoteResponseDTO;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -17,9 +18,12 @@ import java.util.List;
 @Service
 public class QuoteVariationService {
 
+    @Value("${api.vhantage.key}")
+    private String vhantageApiKey;
+
     public List<QuoteResponseDTO> getQuote() throws URISyntaxException {
         var headers = new HttpHeaders();
-        var uri = new URI("https://www.alphavantage.co/query?function=TOP_GAINERS_LOSERS&apikey=W2RC2GK1GBKGHE1V");
+        var uri = new URI("https://www.alphavantage.co/query?function=TOP_GAINERS_LOSERS&apikey=" + vhantageApiKey);
         var requestEntity = new RequestEntity<>(headers, HttpMethod.GET, uri);
         var response = new RestTemplate().exchange(requestEntity, JsonNode.class);
         JsonNode responseBody = response.getBody();

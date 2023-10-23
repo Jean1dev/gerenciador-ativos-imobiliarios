@@ -18,7 +18,7 @@ public class Aplhavante implements BMFBovespa {
     private static final Logger log = LoggerFactory.getLogger(Aplhavante.class);
 
     private final RestTemplate restTemplate;
-    @Value("{api.vhantage.key}")
+    @Value("${api.vhantage.key}")
     private String vhantageApiKey;
     private final String BASE_URL = "https://www.alphavantage.co/query";
     private Set<String> errorList;
@@ -33,7 +33,7 @@ public class Aplhavante implements BMFBovespa {
         try {
             var headers = new HttpHeaders();
             var uri = new URI(
-                    String.format("%s?function=GLOBAL_QUOTE&symbol=%s&apikey=W2RC2GK1GBKGHE1V", BASE_URL, ticker)
+                    String.format("%s?function=GLOBAL_QUOTE&symbol=%s&apikey=%s", BASE_URL, ticker, vhantageApiKey)
             );
             var requestEntity = new RequestEntity<>(headers, HttpMethod.GET, uri);
             var response = restTemplate.exchange(requestEntity, AlphavanteGetQuotaResponse.class);
