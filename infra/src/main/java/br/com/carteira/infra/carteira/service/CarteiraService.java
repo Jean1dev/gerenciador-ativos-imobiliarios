@@ -18,18 +18,20 @@ import br.com.carteira.infra.usuario.service.UsuarioService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static br.com.carteira.dominio.Utils.nullOrValue;
 
 @Service
 public class CarteiraService {
+    private final MongoTemplate mongoTemplate;
     private final CarteiraRepository carteiraRepository;
     private final UsuarioService usuarioService;
     private final AtivoDosUsuariosRepository ativoDosUsuariosRepository;
@@ -37,10 +39,12 @@ public class CarteiraService {
     private final ApplicationEventPublisher publisher;
 
     public CarteiraService(
+            MongoTemplate mongoTemplate,
             CarteiraRepository carteiraRepository,
             UsuarioService usuarioService,
             AtivoDosUsuariosRepository ativoDosUsuariosRepository,
             CriarEAtualizarCarteiraUserCase criarEAtualizarCarteiraUserCase, ApplicationEventPublisher publisher) {
+        this.mongoTemplate = mongoTemplate;
         this.carteiraRepository = carteiraRepository;
         this.usuarioService = usuarioService;
         this.ativoDosUsuariosRepository = ativoDosUsuariosRepository;
@@ -67,10 +71,24 @@ public class CarteiraService {
         var tipos = (List<String>) nullOrValue(filter.getTipos(), Collections.emptyList());
         // TODO:: so permitir buscar ativos da carteira do usuario do request
 
-        if (tipos.isEmpty())
-            return ativoDosUsuariosRepository.findAllByCarteiraRefIn(carteiras, pageRequest);
+        var query = new Query();
+        if (Objects.nonNull(filter.getTerms()) && !filter.getTerms().isBlank()) {
+            query.addCriteria(Criteria.where("ticker").regex(".*" + filter.getTerms() + ".*", "i"));
+        }
 
-        return ativoDosUsuariosRepository.findAllByCarteiraRefInAndTipoAtivoIn(carteiras, tipos, pageRequest);
+        if (!tipos.isEmpty()) {
+            query.addCriteria(Criteria.where("tipoAtivo").in(tipos));
+        }
+
+        query.addCriteria(Criteria.where("carteiraRef").in(carteiras));
+        query.with(pageRequest);
+
+        List<AtivoDosUsuarios> usuariosList = mongoTemplate.find(query, AtivoDosUsuarios.class);
+        return PageableExecutionUtils.getPage(
+                usuariosList,
+                pageRequest,
+                () -> mongoTemplate.count(Query.of(query).limit(-1).skip(-1), AtivoDosUsuarios.class)
+        );
     }
 
     public List<CarteiraDocument> minhasCarteiras(String userName, String email) {

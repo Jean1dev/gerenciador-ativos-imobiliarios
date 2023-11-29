@@ -9,12 +9,15 @@ import br.com.carteira.dominio.exception.DominioException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static br.com.carteira.dominio.Utils.arredondamentoPadrao;
+import static br.com.carteira.dominio.Utils.seNegativoEntaoRetornaZero;
+
 public class NovoAporteUseCase {
 
     public NovoAporteOutput execute(Double valorAporte, Carteira carteira) {
         if (valorAporte.isNaN() ||
                 valorAporte.isInfinite() ||
-                valorAporte.doubleValue() < 0) {
+                valorAporte < 0) {
             throw new DominioException("Valor do aporte nao permitido");
         }
 
@@ -36,8 +39,9 @@ public class NovoAporteUseCase {
         final var metaComValorRecomendados = pesoDaMeta.stream().map(meta -> {
             final var ativoComPercentualETotal = metasPercentuais.get(meta.getTipoAtivo().descricao());
 
-            final var valorRecomendado =
-                    (valorFinalComAporte * (meta.getPercentual() / 100)) - ativoComPercentualETotal.valor();
+            final var valorRecomendado = seNegativoEntaoRetornaZero(
+                    arredondamentoPadrao((valorFinalComAporte * (meta.getPercentual() / 100)) - ativoComPercentualETotal.valor())
+            );
 
             return new MetaComValorRecomendado(meta.getTipoAtivo(), valorRecomendado);
         }).collect(Collectors.toSet());

@@ -18,4 +18,8 @@ public final class Utils {
         decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
         return Double.parseDouble(decimalFormat.format(valor).replace(",", "."));
     }
+
+    public static double seNegativoEntaoRetornaZero(double valor) {
+        return valor < 0 ? 0 : valor;
+    }
 }

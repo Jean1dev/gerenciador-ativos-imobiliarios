@@ -1,5 +1,6 @@
 package br.com.carteira.dominio.ativo.useCase;
 
+import br.com.carteira.dominio.Utils;
 import br.com.carteira.dominio.ativo.Ativo;
 import br.com.carteira.dominio.ativo.useCase.records.RecomendacaoAporte;
 
@@ -21,7 +22,8 @@ public class CalcularRecomendacaoAporteUseCase {
                     var percentualRecomendado = ativo.getPercentualRecomendado();
                     var valorAtual = ativo.getValorAtual() * ativo.getQuantidade();
                     var valorSugestao = (novoValorTotal * (percentualRecomendado / 100)) - valorAtual;
-                    return new RecomendacaoAporte(BigDecimal.valueOf(valorSugestao), ativo);
+                    var valorFormatadoFinal = Utils.seNegativoEntaoRetornaZero(Utils.arredondamentoPadrao(valorSugestao));
+                    return new RecomendacaoAporte(BigDecimal.valueOf(valorFormatadoFinal), ativo);
                 }).sorted(Comparator.comparing(RecomendacaoAporte::recomendacao))
                 .collect(Collectors.toList());
     }

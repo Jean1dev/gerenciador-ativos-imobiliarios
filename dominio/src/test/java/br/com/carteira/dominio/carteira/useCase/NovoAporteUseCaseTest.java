@@ -5,6 +5,7 @@ import br.com.carteira.dominio.ativo.RendaFixa;
 import br.com.carteira.dominio.ativo.TipoAtivo;
 import br.com.carteira.dominio.carteira.Carteira;
 import br.com.carteira.dominio.metas.Meta;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -45,6 +46,13 @@ class NovoAporteUseCaseTest {
         final var useCase = new NovoAporteUseCase();
 
         final var recomendacaoAportes = useCase.execute(1500.00, carteira);
+        recomendacaoAportes.recomendacaoAporteList()
+                        .forEach(recomendacaoAporte -> Assertions.assertTrue(recomendacaoAporte.recomendacao().intValue() >= 0));
+
+        recomendacaoAportes.metaComValorRecomendados().forEach(metaComValorRecomendado -> {
+            Assertions.assertTrue(metaComValorRecomendado.valorRecomendado() >= 0);
+        });
+
         System.out.println(recomendacaoAportes);
     }
 }
