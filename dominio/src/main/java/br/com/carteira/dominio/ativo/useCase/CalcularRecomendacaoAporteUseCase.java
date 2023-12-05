@@ -17,6 +17,11 @@ public class CalcularRecomendacaoAporteUseCase {
                 .mapToDouble(value -> value.getValorAtual() * value.getQuantidade())
                 .sum();
 
+        /*
+        * valor do aporte, percentual de quanto eu deveria ter no ativo
+        *  x = vlAporte * (percentualAtivo / 100) -
+        * */
+
         var novoValorTotal = valorTotal + valorAporte;
         return ativos.stream().map(ativo -> {
                     var percentualRecomendado = ativo.getPercentualRecomendado();

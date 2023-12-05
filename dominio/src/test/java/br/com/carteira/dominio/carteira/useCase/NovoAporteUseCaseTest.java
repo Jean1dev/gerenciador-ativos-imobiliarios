@@ -8,6 +8,7 @@ import br.com.carteira.dominio.metas.Meta;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 class NovoAporteUseCaseTest {
@@ -52,6 +53,23 @@ class NovoAporteUseCaseTest {
         recomendacaoAportes.metaComValorRecomendados().forEach(metaComValorRecomendado -> {
             Assertions.assertTrue(metaComValorRecomendado.valorRecomendado() >= 0);
         });
+
+        BigDecimal recomendacaoAtivo1 = recomendacaoAportes.recomendacaoAporteList()
+                .get(0)
+                .recomendacao();
+
+        Assertions.assertEquals(0.0, recomendacaoAtivo1.doubleValue());
+
+        BigDecimal recomendacaoAtivo2 = recomendacaoAportes.recomendacaoAporteList()
+                .get(1)
+                .recomendacao();
+
+        Assertions.assertEquals(815.8, recomendacaoAtivo2.doubleValue());
+
+        BigDecimal recomendacaoAtivo3 = recomendacaoAportes.recomendacaoAporteList()
+                .get(2)
+                .recomendacao();
+        Assertions.assertEquals(1065.0, recomendacaoAtivo3.doubleValue());
 
         System.out.println(recomendacaoAportes);
     }
