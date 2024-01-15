@@ -1,5 +1,6 @@
 package br.com.carteira.infra.ativo.mongodb;
 
+import br.com.carteira.dominio.ativo.TipoAtivo;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
@@ -16,4 +17,6 @@ public interface AtivoComCotacaoRepository extends MongoRepository<AtivoComCotac
 
     @Query("{'image': null}")
     List<AtivoComCotacao> findAllByImageNull();
+
+    List<AtivoComCotacao> findAllByTipoAtivoIn(List<TipoAtivo> tipoAtivos);
 }

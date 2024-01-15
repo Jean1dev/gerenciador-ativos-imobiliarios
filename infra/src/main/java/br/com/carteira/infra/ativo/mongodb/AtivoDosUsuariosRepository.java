@@ -13,4 +13,6 @@ public interface AtivoDosUsuariosRepository extends PagingAndSortingRepository<A
     List<AtivoDosUsuarios> findAllByCarteiraRef(String carteiraRef);
 
     void deleteAllByCarteiraRef(String carteiraRef);
+
+    void deleteAllByTicker(String ticker);
 }

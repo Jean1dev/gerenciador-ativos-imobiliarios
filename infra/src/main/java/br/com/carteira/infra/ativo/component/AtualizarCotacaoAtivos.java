@@ -1,6 +1,7 @@
 package br.com.carteira.infra.ativo.component;
 
 import br.com.carteira.dominio.ativo.TipoAtivo;
+import br.com.carteira.infra.admin.service.AtivosComProblemasService;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacao;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacaoRepository;
 import br.com.carteira.infra.integracoes.BMFBovespa;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -27,17 +29,23 @@ public class AtualizarCotacaoAtivos {
     private final BMFBovespa bmfBovespa;
     private final AtivoComCotacaoRepository ativoComCotacaoRepository;
     private final ObjectMapper mapper;
+    private final AtivosComProblemasService ativosComProblemasService;
 
-    public AtualizarCotacaoAtivos(BMFBovespa bmfBovespa, AtivoComCotacaoRepository ativoComCotacaoRepository, ObjectMapper mapper) {
+    public AtualizarCotacaoAtivos(BMFBovespa bmfBovespa,
+                                  AtivoComCotacaoRepository ativoComCotacaoRepository,
+                                  ObjectMapper mapper,
+                                  AtivosComProblemasService ativosComProblemasService) {
         this.bmfBovespa = bmfBovespa;
         this.ativoComCotacaoRepository = ativoComCotacaoRepository;
         this.mapper = mapper;
+        this.ativosComProblemasService = ativosComProblemasService;
     }
 
     @Async
     public void run() {
         log.info("iniciando processo de atualizacao de ativos");
-        String collected = ativoComCotacaoRepository.findAll()
+        List<TipoAtivo> tipos = List.of(TipoAtivo.ACAO_INTERNACIONAL, TipoAtivo.ACAO_NACIONAL);
+        String collected = ativoComCotacaoRepository.findAllByTipoAtivoIn(tipos)
                 .stream()
                 .filter(this::deveAtualizar)
                 .parallel()
@@ -81,6 +89,7 @@ public class AtualizarCotacaoAtivos {
             return message;
         }
 
+        ativosComProblemasService.evidenciar(ticker);
         return "Nao foi possivel atualizar " + ticker;
     }
 
