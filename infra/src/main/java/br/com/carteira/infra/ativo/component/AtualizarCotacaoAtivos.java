@@ -50,9 +50,8 @@ public class AtualizarCotacaoAtivos {
                 .filter(this::deveAtualizar)
                 .parallel()
                 .map(ativoComCotacao -> {
-                    var ticker = getTickerParaPesquisa(ativoComCotacao);
-                    log.info(ticker);
-                    return atualizarCotacao(ticker, ativoComCotacao);
+                    log.info(ativoComCotacao.getTicker());
+                    return atualizarCotacao(ativoComCotacao);
                 }).collect(Collectors.joining(System.lineSeparator()));
 
         evidenciarResultado(collected + bmfBovespa.getErrorList());
@@ -79,18 +78,19 @@ public class AtualizarCotacaoAtivos {
         }
     }
 
-    private String atualizarCotacao(String ticker, AtivoComCotacao ativoComCotacao) {
-        var cotacao = bmfBovespa.getCotacao(ticker);
+    private String atualizarCotacao(AtivoComCotacao ativoComCotacao) {
+        var searchTicker = getTickerParaPesquisa(ativoComCotacao);
+        var cotacao = bmfBovespa.getCotacao(searchTicker);
         if (cotacao != null) {
-            var message = String.format("atualizado %s para %s", ticker, cotacao.valor());
+            var message = String.format("atualizado %s para %s", ativoComCotacao.getTicker(), cotacao.valor());
             log.info(message);
             ativoComCotacao.atualizarValor(cotacao.valor());
             ativoComCotacaoRepository.save(ativoComCotacao);
             return message;
         }
 
-        ativosComProblemasService.evidenciar(ticker);
-        return "Nao foi possivel atualizar " + ticker;
+        ativosComProblemasService.evidenciar(ativoComCotacao.getTicker());
+        return "Nao foi possivel atualizar " + ativoComCotacao.getTicker();
     }
 
     private boolean deveAtualizar(AtivoComCotacao ativoComCotacao) {
