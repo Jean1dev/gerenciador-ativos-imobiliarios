@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 
 public class AlphavanteGetQuotaResponse implements Serializable {
+
+    @JsonProperty("Information")
+    private String Information;
     @JsonProperty("Global Quote")
     private GlobalQuote globalQuote;
 
@@ -13,6 +16,10 @@ public class AlphavanteGetQuotaResponse implements Serializable {
 
     public GlobalQuote getGlobalQuote() {
         return globalQuote;
+    }
+
+    public String getInformation() {
+        return Information;
     }
 
     public void setGlobalQuote(GlobalQuote globalQuote) {

@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class Aplhavante implements BMFBovespa {
@@ -40,6 +41,11 @@ public class Aplhavante implements BMFBovespa {
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 AlphavanteGetQuotaResponse alphavanteGetQuotaResponse = response.getBody();
+
+                if (Objects.nonNull(alphavanteGetQuotaResponse.getInformation()) &&
+                        !alphavanteGetQuotaResponse.getInformation().isBlank()) {
+                    return new CotacaoDto(0.0);
+                }
 
                 if (alphavanteGetQuotaResponse != null
                         && alphavanteGetQuotaResponse.getGlobalQuote() != null

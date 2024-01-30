@@ -82,6 +82,11 @@ public class AtualizarCotacaoAtivos {
         var searchTicker = getTickerParaPesquisa(ativoComCotacao);
         var cotacao = bmfBovespa.getCotacao(searchTicker);
         if (cotacao != null) {
+
+            if (cotacao.valor().intValue() == 0) {
+                return "Nao atualizado valor para 0";
+            }
+
             var message = String.format("atualizado %s para %s", ativoComCotacao.getTicker(), cotacao.valor());
             log.info(message);
             ativoComCotacao.atualizarValor(cotacao.valor());
