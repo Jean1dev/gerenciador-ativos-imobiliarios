@@ -1,4 +1,4 @@
-package br.com.carteira.infra.ativo.component;
+package br.com.carteira.infra.ativo.records;
 
 public record EnviarEmailPayload(
         String to,
