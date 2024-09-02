@@ -75,9 +75,9 @@ public class AtualizarCotacaoAtivos {
         var virtualThread = Thread.startVirtualThread(() -> {
             var variacapDePreco = CalcularVariacaoAtivoDuranteTimeBox.calc(
                     resultadoAtualizacaoAtivo.cotacaoAntiga(),
-                    resultadoAtualizacaoAtivo.dataUltimaAtualizacao(),
+                    resultadoAtualizacaoAtivo.dataCriacao(),
                     resultadoAtualizacaoAtivo.cotacaoNova(),
-                    resultadoAtualizacaoAtivo.dataCriacao()
+                    resultadoAtualizacaoAtivo.dataUltimaAtualizacao()
             );
 
             var ativoVariado = new VariacaoAtivo(
