@@ -47,11 +47,11 @@ class AtivosComProblemasServiceTest extends E2ETests {
         var xpml11 = "XPML11";
         service.evidenciar(xpml11);
 
-        List<AtivosComProblema> all = mongoOperations.findAll(AtivosComProblema.class, AtivosComProblemasService.COLLECTION_NAME);
+        List<AtivosComProblema> all = mongoOperations.findAll(AtivosComProblema.class, AtivosComProblemasService.ATIVOS_COM_PROBLEMAS_EVIDENCIAS);
 
         assertEquals(1, all.size());
         assertEquals(xpml11, all.get(0).ticker());
-        mongoOperations.dropCollection(AtivosComProblemasService.COLLECTION_NAME);
+        mongoOperations.dropCollection(AtivosComProblemasService.ATIVOS_COM_PROBLEMAS_EVIDENCIAS);
     }
 
     @Test
@@ -91,7 +91,7 @@ class AtivosComProblemasServiceTest extends E2ETests {
 
         assertTrue(empty);
 
-        boolean collectionExists = mongoOperations.collectionExists(AtivosComProblemasService.COLLECTION_NAME);
+        boolean collectionExists = mongoOperations.collectionExists(AtivosComProblemasService.ATIVOS_COM_PROBLEMAS_EVIDENCIAS);
         assertFalse(collectionExists);
     }
 }

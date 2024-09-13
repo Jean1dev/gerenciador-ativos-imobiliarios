@@ -117,6 +117,7 @@ public class AtualizarCotacaoAtivos {
 
     private ResultadoAtualizacaoAtivo atualizarCotacao(AtivoComCotacao ativoComCotacao) {
         var searchTicker = getTickerParaPesquisa(ativoComCotacao);
+        var cotacaoAntiga = ativoComCotacao.getValor();
         var cotacao = bmfBovespa.getCotacao(searchTicker);
         if (cotacao != null) {
 
@@ -128,7 +129,7 @@ public class AtualizarCotacaoAtivos {
             log.info(message);
             ativoComCotacao.atualizarValor(cotacao.valor());
             ativoComCotacaoRepository.save(ativoComCotacao);
-            return ResultadoAtualizacaoAtivo.from(ativoComCotacao, message, cotacao.valor());
+            return ResultadoAtualizacaoAtivo.from(ativoComCotacao, message, cotacaoAntiga);
         }
 
         ativosComProblemasService.evidenciar(ativoComCotacao.getTicker());

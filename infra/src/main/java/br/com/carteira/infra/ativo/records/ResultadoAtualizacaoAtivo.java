@@ -23,11 +23,11 @@ public record ResultadoAtualizacaoAtivo(
         );
     }
 
-    public static ResultadoAtualizacaoAtivo from(AtivoComCotacao ativoComCotacao, String mensagem, Double cotacaoNova) {
+    public static ResultadoAtualizacaoAtivo from(AtivoComCotacao ativoComCotacao, String mensagem, Double cotacaoAntiga) {
         return new ResultadoAtualizacaoAtivo(
                 ativoComCotacao.getTicker(),
+                cotacaoAntiga,
                 ativoComCotacao.getValor(),
-                cotacaoNova,
                 mensagem,
                 LocalDateTime.now(),
                 ativoComCotacao.getUltimaAtualizacao()
