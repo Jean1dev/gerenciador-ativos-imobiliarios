@@ -23,6 +23,7 @@ public class Aplhavante implements BMFBovespa {
     private String vhantageApiKey;
     private final String BASE_URL = "https://www.alphavantage.co/query";
     private Set<String> errorList;
+    private String lastErrorMessage;
 
     public Aplhavante() {
         restTemplate = new RestTemplate();
@@ -51,15 +52,20 @@ public class Aplhavante implements BMFBovespa {
                         && alphavanteGetQuotaResponse.getGlobalQuote() != null
                         && alphavanteGetQuotaResponse.getGlobalQuote().getPrice() != null)
                     return new CotacaoDto(alphavanteGetQuotaResponse.getGlobalQuote().getPrice());
+
+                lastErrorMessage = alphavanteGetQuotaResponse.getInformation();
             }
+
+            return null;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             log.error(e.getLocalizedMessage());
             log.info("Nao foi possivel atualizar a cotacao " + ticker);
-            errorList.add(String.format("%s -> %s -> %s", ticker, e.getLocalizedMessage(), e.getMessage()));
+            var message = String.format("%s -> %s -> %s", ticker, e.getLocalizedMessage(), e.getMessage());
+            lastErrorMessage  = message;
+            errorList.add(message);
+            return null;
         }
-
-        return null;
     }
 
     @Override
@@ -67,5 +73,10 @@ public class Aplhavante implements BMFBovespa {
         var joined = String.join(",", errorList);
         errorList = new HashSet<>();
         return joined;
+    }
+
+    @Override
+    public String getLastErrorDetails() {
+        return Objects.nonNull(lastErrorMessage) ? lastErrorMessage : "";
     }
 }

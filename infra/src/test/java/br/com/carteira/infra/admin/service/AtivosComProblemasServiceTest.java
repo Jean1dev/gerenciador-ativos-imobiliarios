@@ -45,7 +45,7 @@ class AtivosComProblemasServiceTest extends E2ETests {
     @Test
     void evidenciar() {
         var xpml11 = "XPML11";
-        service.evidenciar(xpml11);
+        service.evidenciar(xpml11, "");
 
         List<AtivosComProblema> all = mongoOperations.findAll(AtivosComProblema.class, AtivosComProblemasService.ATIVOS_COM_PROBLEMAS_EVIDENCIAS);
 
@@ -77,7 +77,7 @@ class AtivosComProblemasServiceTest extends E2ETests {
                 null,
                 null)).getId();
 
-        service.evidenciar(deveDeltarEsse);
+        service.evidenciar(deveDeltarEsse, "");
         service.corrigirFalhas();
 
         assertTrue(ativoDosUsuariosRepository.findById(idAtivo).isEmpty());

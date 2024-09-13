@@ -6,6 +6,8 @@ import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuariosRepository;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class AtivosComProblemasService {
 
@@ -23,8 +25,9 @@ public class AtivosComProblemasService {
         this.ativoDosUsuariosRepository = ativoDosUsuariosRepository;
     }
 
-    public void evidenciar(String ticker) {
-        mongoOperations.save(new AtivosComProblema(ticker), ATIVOS_COM_PROBLEMAS_EVIDENCIAS);
+    public void evidenciar(String ticker, String message) {
+        var ativoComProblema = new AtivosComProblema(ticker, LocalDateTime.now(), message);
+        mongoOperations.save(ativoComProblema, ATIVOS_COM_PROBLEMAS_EVIDENCIAS);
     }
 
     public void corrigirFalhas() {

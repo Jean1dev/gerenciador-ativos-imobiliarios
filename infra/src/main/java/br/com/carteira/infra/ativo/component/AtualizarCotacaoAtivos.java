@@ -132,7 +132,7 @@ public class AtualizarCotacaoAtivos {
             return ResultadoAtualizacaoAtivo.from(ativoComCotacao, message, cotacaoAntiga);
         }
 
-        ativosComProblemasService.evidenciar(ativoComCotacao.getTicker());
+        ativosComProblemasService.evidenciar(ativoComCotacao.getTicker(), bmfBovespa.getLastErrorDetails());
         return ResultadoAtualizacaoAtivo.from(ativoComCotacao, "Nao foi possivel atualizar " + ativoComCotacao.getTicker());
     }
 
