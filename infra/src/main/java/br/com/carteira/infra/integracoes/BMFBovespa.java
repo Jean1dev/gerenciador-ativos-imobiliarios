@@ -5,4 +5,6 @@ public interface BMFBovespa {
     CotacaoDto getCotacao(String ticker);
 
     String getErrorList();
+
+    String getLastErrorDetails();
 }
