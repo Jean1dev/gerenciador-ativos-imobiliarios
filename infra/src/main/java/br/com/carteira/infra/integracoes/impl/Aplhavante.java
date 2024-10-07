@@ -11,9 +11,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 public class Aplhavante implements BMFBovespa {
     private static final Logger log = LoggerFactory.getLogger(Aplhavante.class);
@@ -22,12 +20,9 @@ public class Aplhavante implements BMFBovespa {
     @Value("${api.vhantage.key}")
     private String vhantageApiKey;
     private final String BASE_URL = "https://www.alphavantage.co/query";
-    private Set<String> errorList;
-    private String lastErrorMessage;
 
     public Aplhavante() {
         restTemplate = new RestTemplate();
-        errorList = new HashSet<>();
     }
 
     @Override
@@ -45,38 +40,23 @@ public class Aplhavante implements BMFBovespa {
 
                 if (Objects.nonNull(alphavanteGetQuotaResponse.getInformation()) &&
                         !alphavanteGetQuotaResponse.getInformation().isBlank()) {
-                    return new CotacaoDto(0.0);
+                    return CotacaoDto.fromPrice(0.0);
                 }
 
                 if (alphavanteGetQuotaResponse != null
                         && alphavanteGetQuotaResponse.getGlobalQuote() != null
                         && alphavanteGetQuotaResponse.getGlobalQuote().getPrice() != null)
-                    return new CotacaoDto(alphavanteGetQuotaResponse.getGlobalQuote().getPrice());
+                    return CotacaoDto.fromPrice(alphavanteGetQuotaResponse.getGlobalQuote().getPrice());
 
-                lastErrorMessage = alphavanteGetQuotaResponse.getInformation();
             }
 
-            return null;
+            return CotacaoDto.fromPrice(0.0);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             log.error(e.getLocalizedMessage());
             log.info("Nao foi possivel atualizar a cotacao " + ticker);
             var message = String.format("%s -> %s -> %s", ticker, e.getLocalizedMessage(), e.getMessage());
-            lastErrorMessage  = message;
-            errorList.add(message);
-            return null;
+            return new CotacaoDto(0.0, true, message);
         }
-    }
-
-    @Override
-    public String getErrorList() {
-        var joined = String.join(",", errorList);
-        errorList = new HashSet<>();
-        return joined;
-    }
-
-    @Override
-    public String getLastErrorDetails() {
-        return Objects.nonNull(lastErrorMessage) ? lastErrorMessage : "";
     }
 }
