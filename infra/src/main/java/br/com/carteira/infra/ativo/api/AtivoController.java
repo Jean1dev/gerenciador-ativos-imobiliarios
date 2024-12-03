@@ -35,7 +35,6 @@ public class AtivoController {
     @PutMapping
     public void atualizarAtivo(@RequestBody AtualizarAtivoInput body) {
         gestaoAtivosUseCase.atualizarAtivo(body);
-
     }
 
     @PostMapping

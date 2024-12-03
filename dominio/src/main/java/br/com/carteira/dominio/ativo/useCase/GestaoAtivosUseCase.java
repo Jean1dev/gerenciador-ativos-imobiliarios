@@ -7,6 +7,7 @@ import br.com.carteira.dominio.ativo.useCase.records.AtualizarAtivoInput;
 import br.com.carteira.dominio.carteira.Carteira;
 import br.com.carteira.dominio.carteira.CarteiraGateway;
 import br.com.carteira.dominio.carteira.useCase.records.AtivoSimplificado;
+import br.com.carteira.dominio.crypto.CryptoAtivosMapping;
 import br.com.carteira.dominio.exception.DominioException;
 
 import java.util.Objects;
@@ -51,6 +52,8 @@ public class GestaoAtivosUseCase {
             carteira.setQuantidadeAtivos(carteira.getQuantidadeAtivos() + 1);
             carteiraGateway.salvar(carteira);
             return;
+        } else if (TipoAtivo.CRYPTO.equals(input.tipoAtivo())) {
+            input = resolverNomeCrypto(input);
         }
 
         carteira.setQuantidadeAtivos(carteira.getQuantidadeAtivos() + 1);
@@ -64,6 +67,22 @@ public class GestaoAtivosUseCase {
                         null,
                         (double) nullOrValue(input.valorAtual(), 0.0)
                 ));
+    }
+
+    private AdicionarAtivoInput resolverNomeCrypto(AdicionarAtivoInput input) {
+        return CryptoAtivosMapping.ifContainsGetName(input.nome())
+                .map(nome -> new AdicionarAtivoInput(
+                        input.tipoAtivo(),
+                        input.nota(),
+                        input.valorAtual(),
+                        input.localAlocado(),
+                        input.tipoAlocacao(),
+                        input.quantidade(),
+                        nome,
+                        input.identificacaoCarteira(),
+                        input.criterios()
+                ))
+                .orElseThrow(() -> new DominioException("criptomoeda ainda nao suportada"));
     }
 
     private void adicionarAtivoComTicker(Carteira carteira, AtivoSimplificado ativoSimplificado) {

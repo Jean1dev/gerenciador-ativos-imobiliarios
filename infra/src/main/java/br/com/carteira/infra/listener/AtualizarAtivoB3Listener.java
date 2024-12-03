@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-import static utils.Utils.getTickerParaPesquisa;
+import static br.com.carteira.infra.utils.Utils.getTickerParaPesquisa;
 
 @Component
 public class AtualizarAtivoB3Listener {
@@ -39,8 +39,21 @@ public class AtualizarAtivoB3Listener {
 
     @EventListener
     public void on(AtivoComCotacao ativoComCotacao) {
-        var resultadoAtualizacaoAtivo = atualizarCotacao(ativoComCotacao);
+        var resultadoAtualizacaoAtivo = atualizarCotacaoCorretaPorTipo(ativoComCotacao);
         asyncRegistrarVariacao(resultadoAtualizacaoAtivo);
+    }
+
+    private ResultadoAtualizacaoAtivo atualizarCotacaoCorretaPorTipo(AtivoComCotacao ativoComCotacao) {
+        return switch (ativoComCotacao.getTipoAtivo()) {
+            case ACAO_NACIONAL -> atualizarCotacao(ativoComCotacao);
+            case ACAO_INTERNACIONAL -> atualizarCotacao(ativoComCotacao);
+            case CRYPTO -> atualizarCrypto(ativoComCotacao);
+            default -> ResultadoAtualizacaoAtivo.from(ativoComCotacao, "Tipo de ativo não suportado");
+        };
+    }
+
+    private ResultadoAtualizacaoAtivo atualizarCrypto(AtivoComCotacao ativoComCotacao) {
+        return null;
     }
 
 
