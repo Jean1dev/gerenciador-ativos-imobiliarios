@@ -23,8 +23,10 @@ public class AtivoController {
     private AtivoService ativoService;
 
     @GetMapping("sugestao")
-    public List<String> buscarSugestao(@RequestParam("query") String query) {
-        return ativoService.suggesty(query);
+    public List<String> buscarSugestao(
+            @RequestParam("query") String query,
+            @RequestParam(value = "onlyCrypto", required = false, defaultValue = "false") boolean onlyCrypto) {
+        return ativoService.suggesty(query, onlyCrypto);
     }
 
     @PostMapping("aportar")

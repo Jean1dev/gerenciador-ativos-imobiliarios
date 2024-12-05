@@ -45,17 +45,10 @@ public class AtualizarAtivoB3Listener {
 
     private ResultadoAtualizacaoAtivo atualizarCotacaoCorretaPorTipo(AtivoComCotacao ativoComCotacao) {
         return switch (ativoComCotacao.getTipoAtivo()) {
-            case ACAO_NACIONAL -> atualizarCotacao(ativoComCotacao);
-            case ACAO_INTERNACIONAL -> atualizarCotacao(ativoComCotacao);
-            case CRYPTO -> atualizarCrypto(ativoComCotacao);
+            case ACAO_NACIONAL, ACAO_INTERNACIONAL -> atualizarCotacao(ativoComCotacao);
             default -> ResultadoAtualizacaoAtivo.from(ativoComCotacao, "Tipo de ativo não suportado");
         };
     }
-
-    private ResultadoAtualizacaoAtivo atualizarCrypto(AtivoComCotacao ativoComCotacao) {
-        return null;
-    }
-
 
     private void asyncRegistrarVariacao(ResultadoAtualizacaoAtivo resultadoAtualizacaoAtivo) {
         if (Objects.isNull(resultadoAtualizacaoAtivo.cotacaoNova()))
