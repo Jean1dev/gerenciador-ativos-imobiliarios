@@ -12,3 +12,5 @@ server:
 api:
   vhantage:
     key: W2RC2GK1GBKGHE1V
+  coinmarketmap:
+    key: 7a30964b-ff11-4c1b-ad89-438e33295a3c

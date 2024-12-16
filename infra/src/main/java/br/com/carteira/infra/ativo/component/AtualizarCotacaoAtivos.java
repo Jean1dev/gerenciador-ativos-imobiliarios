@@ -26,11 +26,19 @@ public class AtualizarCotacaoAtivos {
 
     @Async
     public void run() {
-        ativoComCotacaoRepository.findAllByTipoAtivoIn(List.of(TipoAtivo.ACAO_INTERNACIONAL, TipoAtivo.ACAO_NACIONAL))
+        ativoComCotacaoRepository.findAllByTipoAtivoIn(getTipoAtivos())
                 .stream()
                 .filter(this::deveAtualizar)
                 .parallel()
                 .forEach(eventPublisher::publishEvent);
+    }
+
+    private List<TipoAtivo> getTipoAtivos() {
+        return List.of(
+                TipoAtivo.ACAO_INTERNACIONAL,
+                TipoAtivo.ACAO_NACIONAL,
+                TipoAtivo.CRYPTO
+        );
     }
 
 

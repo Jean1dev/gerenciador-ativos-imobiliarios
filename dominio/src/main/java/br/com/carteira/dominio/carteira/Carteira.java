@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class Carteira {
     private String nome;
     private Meta meta;
-    private Set<Ativo> ativos;
+    private Set<Ativo> ativos = Set.of();
     private String identificacao;
     private int quantidadeAtivos;
 
@@ -74,6 +74,15 @@ public class Carteira {
                 .map(ativo -> {
                     AcaoInternacional acao = (AcaoInternacional) ativo;
                     return AcaoInternacional.fromParent(acao.getTicker(), ativo);
+                }).collect(Collectors.toUnmodifiableSet());
+    }
+
+    public Set<Crypto> getCryptos() {
+        return ativos.stream()
+                .filter(ativo -> TipoAtivo.CRYPTO.equals(ativo.getTipoAtivo()))
+                .map(ativo -> {
+                    AtivoComTicker a = (AtivoComTicker) ativo;
+                    return Crypto.fromParent(ativo, a.getTicker());
                 }).collect(Collectors.toUnmodifiableSet());
     }
 

@@ -1,4 +1,4 @@
-package utils;
+package br.com.carteira.infra.utils;
 
 import br.com.carteira.dominio.ativo.TipoAtivo;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacao;

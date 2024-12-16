@@ -1,6 +1,7 @@
 package br.com.carteira.infra.ativo.service;
 
 import br.com.carteira.dominio.ativo.useCase.records.AportarAtivoInput;
+import br.com.carteira.dominio.crypto.CryptoAtivosMapping;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacao;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacaoRepository;
 import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuariosRepository;
@@ -19,9 +20,19 @@ public class AtivoService {
         this.ativoComCotacaoRepository = ativoComCotacaoRepository;
     }
 
-    public List<String> suggesty(String query) {
+    public List<String> suggesty(String query, boolean onlyCrypto) {
+        if (onlyCrypto) {
+            return suggestyCrypto(query);
+        }
         return ativoComCotacaoRepository.findAllByTickerContaining(query.toUpperCase())
                 .stream().map(AtivoComCotacao::getTicker)
+                .toList();
+    }
+
+    private List<String> suggestyCrypto(String query) {
+        return CryptoAtivosMapping.listMapping()
+                .stream()
+                .filter(s -> s.toUpperCase().contains(query.toUpperCase()))
                 .toList();
     }
 
