@@ -39,7 +39,7 @@ public class UsuarioService {
 
     public void reduzirSaldoNoUsuario(String name, String email, Double saldo) {
         var usuario = needUsuario(name, email);
-        var novoSaldo = usuario.getSaldo() == null ? saldo : usuario.getSaldo() + saldo;
+        var novoSaldo = usuario.getSaldo() == null ? saldo : usuario.getSaldo() - saldo;
         usuario.atualizarSaldo(novoSaldo);
         usuarioRepository.save(usuario);
     }
