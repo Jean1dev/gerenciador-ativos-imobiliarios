@@ -11,11 +11,27 @@ public class Usuario {
     @Indexed(unique = true)
     private String name;
     private String email;
+    private Double saldo;
 
     public Usuario(String id, String name, String email) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.saldo = 0.0;
+    }
+
+    public Usuario(String id, String name, String email, Double saldo) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.saldo = saldo;
+    }
+
+    public Usuario() {
+    }
+
+    public void atualizarSaldo(Double saldo) {
+        this.saldo = saldo;
     }
 
     public String getId() {
@@ -28,5 +44,9 @@ public class Usuario {
 
     public String getEmail() {
         return email;
+    }
+
+    public Double getSaldo() {
+        return saldo;
     }
 }

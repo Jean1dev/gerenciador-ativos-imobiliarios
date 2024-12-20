@@ -2,6 +2,7 @@ package br.com.carteira.infra.admin.api;
 
 import br.com.carteira.infra.admin.api.dto.AtualizarAtivoComCotacaoInput;
 import br.com.carteira.infra.admin.service.AdminAtivosComCotacaoService;
+import br.com.carteira.infra.admin.service.AdminUsuariosService;
 import br.com.carteira.infra.admin.service.AtivosComProblemasService;
 import br.com.carteira.infra.ativo.component.AtualizarCotacaoAtivos;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacao;
@@ -17,17 +18,24 @@ public class AdministracaoController {
     private final AtualizarCotacaoAtivos cotacaoAtivos;
     private final AdminAtivosComCotacaoService adminAtivosComCotacaoService;
     private final AtivosComProblemasService ativosComProblemasService;
+    private final AdminUsuariosService adminUsuariosService;
 
-    public AdministracaoController(AtualizarCotacaoAtivos cotacaoAtivos, AdminAtivosComCotacaoService adminAtivosComCotacaoService, AtivosComProblemasService ativosComProblemasService) {
+    public AdministracaoController(
+            AtualizarCotacaoAtivos cotacaoAtivos,
+            AdminAtivosComCotacaoService adminAtivosComCotacaoService,
+            AtivosComProblemasService ativosComProblemasService,
+            AdminUsuariosService adminUsuariosService) {
         this.cotacaoAtivos = cotacaoAtivos;
         this.adminAtivosComCotacaoService = adminAtivosComCotacaoService;
         this.ativosComProblemasService = ativosComProblemasService;
+        this.adminUsuariosService = adminUsuariosService;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void atualizarCotacaoAtivos() {
         cotacaoAtivos.run();
+        adminUsuariosService.adicionarSaldosUsuarios();
     }
 
     @PostMapping("corrigir-falhas")
