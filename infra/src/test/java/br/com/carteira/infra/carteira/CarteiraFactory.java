@@ -11,6 +11,10 @@ public final class CarteiraFactory {
         return carteira;
     }
 
+    public static CarteiraDocument umaCarteiraParaUsuario(String usuarioRef) {
+        return new CarteiraDocument(null, "para testes", null, usuarioRef, 0);
+    }
+
     public static CarteiraDocument carteiraDocument() {
         return new CarteiraDocument(null, "fake", null, "ref", 2);
     }

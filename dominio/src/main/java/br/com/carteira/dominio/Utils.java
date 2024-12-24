@@ -22,4 +22,8 @@ public final class Utils {
     public static double seNegativoEntaoRetornaZero(double valor) {
         return valor < 0 ? 0 : valor;
     }
+
+    public static String generateUUID_String() {
+        return java.util.UUID.randomUUID().toString();
+    }
 }
