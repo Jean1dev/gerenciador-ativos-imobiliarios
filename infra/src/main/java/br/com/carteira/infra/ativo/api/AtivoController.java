@@ -22,6 +22,12 @@ public class AtivoController {
     @Autowired
     private AtivoService ativoService;
 
+    @GetMapping("id")
+    public Map buscarIdPorTicker(@RequestParam("ticker") String ticker) {
+        var idByTicker = ativoService.findIdByTicker(ticker);
+        return Map.of("id", idByTicker);
+    }
+
     @GetMapping("sugestao")
     public List<String> buscarSugestao(
             @RequestParam("query") String query,

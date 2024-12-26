@@ -52,6 +52,22 @@ class AtivoControllerTest extends E2ETests {
     }
 
     @Test
+    @DisplayName("deve encontrar um ativo pelo ticker")
+    void findIdByTIcker() throws Exception {
+        AtivoComCotacao anim3 = ativoComCotacaoRepository.save(AtivoComCotacao.criarCotacao("ANIM3", TipoAtivo.ACAO_NACIONAL));
+        final var request = get("/ativo/id")
+                .queryParam("ticker", "ANIM3")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var response = this.mvc.perform(request)
+                .andDo(print());
+
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.id").value(anim3.getId()));
+    }
+
+    @Test
     @DisplayName("Deve trazer uma lista de sugestao de ativos")
     public void sugestao() throws Exception {
         ativoComCotacaoRepository.save(AtivoComCotacao.criarCotacao("PETR4", TipoAtivo.ACAO_NACIONAL));

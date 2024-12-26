@@ -20,6 +20,12 @@ public class AtivoService {
         this.ativoComCotacaoRepository = ativoComCotacaoRepository;
     }
 
+    public String findIdByTicker(String ticker) {
+        return ativoComCotacaoRepository.findByTicker(ticker.toUpperCase())
+                .map(AtivoComCotacao::getId)
+                .orElse(null);
+    }
+
     public List<String> suggesty(String query, boolean onlyCrypto) {
         if (onlyCrypto) {
             return suggestyCrypto(query);
