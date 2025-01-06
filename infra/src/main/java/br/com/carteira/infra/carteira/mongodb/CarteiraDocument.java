@@ -31,6 +31,7 @@ public class CarteiraDocument {
         carteira.setMeta(carteiraDocument.getMeta());
         carteira.setAtivos(Collections.emptySet());
         carteira.setQuantidadeAtivos(carteiraDocument.getQuantidadeAtivos());
+        carteira.setPertenceAoUsuarioRef(carteiraDocument.getUsuarioRef());
         return carteira;
     }
 

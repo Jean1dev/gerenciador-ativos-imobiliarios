@@ -51,7 +51,7 @@ public class DefaultCarteiraGateway implements CarteiraGateway {
 
     @Override
     public Carteira salvar(Carteira carteira) {
-        Usuario usuario = usuarioService.getUsuario(holder.getUserName(), holder.getEmail());
+        Usuario usuario = getUsuario(carteira);
         log.info("Usuario localizado " + usuario.getName());
         CarteiraDocument carteiraDocument = carteiraRepository.save(new CarteiraDocument(
                 carteira.getIdentificacao(),
@@ -71,6 +71,14 @@ public class DefaultCarteiraGateway implements CarteiraGateway {
                 )).forEach(ativoSimplificado -> adicionarAtivoNaCarteira(carteira, ativoSimplificado));
 
         return carteira;
+    }
+
+    private Usuario getUsuario(Carteira carteira) {
+        if (Objects.isNull(holder.getUserName()) || Objects.isNull(holder.getEmail())) {
+            return usuarioService.needUsuario(carteira.getPertenceAoUsuarioRef());
+        }
+
+        return usuarioService.getUsuario(holder.getUserName(), holder.getEmail());
     }
 
     @Override

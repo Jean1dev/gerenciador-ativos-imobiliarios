@@ -28,6 +28,13 @@ public class UsuarioService {
                 .orElseGet(() -> usuarioRepository.save(new Usuario(null, name, email)));
     }
 
+    public Usuario needUsuario(String usuarioRef) {
+        return usuarioRepository.findById(usuarioRef)
+                .orElseThrow(() -> {
+                    throw new ApplicationException("Usuario não encontrado");
+                });
+    }
+
     public Usuario needUsuario(String name, String email) {
         return usuarioRepository.findByNameAndEmail(name, email)
                 .orElseThrow(() -> {
@@ -54,12 +61,5 @@ public class UsuarioService {
         var novoSaldo = usuario.getSaldo() == null ? saldo : usuario.getSaldo() - saldo;
         usuario.atualizarSaldo(novoSaldo);
         usuarioRepository.save(usuario);
-    }
-
-    private Usuario needUsuario(String usuarioRef) {
-        return usuarioRepository.findById(usuarioRef)
-                .orElseThrow(() -> {
-                    throw new ApplicationException("Usuario não encontrado");
-                });
     }
 }
