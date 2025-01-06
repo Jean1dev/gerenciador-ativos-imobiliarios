@@ -16,6 +16,11 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
+    public boolean verificarSePossuiSaldo(String usuarioRef, double valor) {
+        var usuario = needUsuario(usuarioRef);
+        return usuario.getSaldo() != null && usuario.getSaldo() >= valor;
+    }
+
     public Usuario getUsuario(String name, String email) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(email);
@@ -42,5 +47,19 @@ public class UsuarioService {
         var novoSaldo = usuario.getSaldo() == null ? saldo : usuario.getSaldo() - saldo;
         usuario.atualizarSaldo(novoSaldo);
         usuarioRepository.save(usuario);
+    }
+
+    public void reduzirSaldoNoUsuario(String usuarioRef, Double saldo) {
+        var usuario = needUsuario(usuarioRef);
+        var novoSaldo = usuario.getSaldo() == null ? saldo : usuario.getSaldo() - saldo;
+        usuario.atualizarSaldo(novoSaldo);
+        usuarioRepository.save(usuario);
+    }
+
+    private Usuario needUsuario(String usuarioRef) {
+        return usuarioRepository.findById(usuarioRef)
+                .orElseThrow(() -> {
+                    throw new ApplicationException("Usuario não encontrado");
+                });
     }
 }

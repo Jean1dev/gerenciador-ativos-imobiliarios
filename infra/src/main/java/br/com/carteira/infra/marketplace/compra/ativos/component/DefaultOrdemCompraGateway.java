@@ -7,6 +7,7 @@ import br.com.carteira.infra.ativo.mongodb.AtivoComCotacao;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacaoRepository;
 import br.com.carteira.infra.marketplace.compra.ativos.mongodb.OrdemCompraAtivo;
 import br.com.carteira.infra.marketplace.compra.ativos.mongodb.OrdemCompraAtivoRepository;
+import br.com.carteira.infra.usuario.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,8 @@ public class DefaultOrdemCompraGateway implements OrdemCompraGateway {
     private OrdemCompraAtivoRepository repository;
     @Autowired
     private AtivoComCotacaoRepository ativoComCotacaoRepository;
+    @Autowired
+    private UsuarioService usuarioService;
 
     @Override
     public void registrarOrdem(OrdemCompra ordemCompra) {
@@ -26,12 +29,12 @@ public class DefaultOrdemCompraGateway implements OrdemCompraGateway {
 
     @Override
     public boolean verificarSeUsuarioPossuiSaldo(String usuarioRef, double valor) {
-        return true;
+        return usuarioService.verificarSePossuiSaldo(usuarioRef, valor);
     }
 
     @Override
     public void retirarSaldoDoUsuario(String usuarioRef, Double valor) {
-
+        usuarioService.reduzirSaldoNoUsuario(usuarioRef, valor);
     }
 
     @Override
