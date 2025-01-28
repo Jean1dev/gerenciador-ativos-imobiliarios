@@ -14,4 +14,15 @@ public final class UsuarioFactory {
                 )
         );
     }
+
+    public static Usuario umUsuarioSalvo(UsuarioRepository repository, String email, String nome) {
+        return repository.save(
+                new Usuario(
+                        null,
+                        nome,
+                        email,
+                        500.00
+                )
+        );
+    }
 }

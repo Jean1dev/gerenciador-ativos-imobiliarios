@@ -14,6 +14,7 @@ public class Carteira {
     private Set<Ativo> ativos = Set.of();
     private String identificacao;
     private int quantidadeAtivos;
+    private String pertenceAoUsuarioRef;
 
     public Carteira() {
     }
@@ -145,5 +146,13 @@ public class Carteira {
 
     public void setQuantidadeAtivos(int quantidadeAtivos) {
         this.quantidadeAtivos = quantidadeAtivos;
+    }
+
+    public String getPertenceAoUsuarioRef() {
+        return pertenceAoUsuarioRef;
+    }
+
+    public void setPertenceAoUsuarioRef(String pertenceAoUsuarioRef) {
+        this.pertenceAoUsuarioRef = pertenceAoUsuarioRef;
     }
 }

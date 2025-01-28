@@ -1,5 +1,6 @@
 package br.com.carteira.dominio.marketplace.compra.ativos.useCase;
 
+import br.com.carteira.dominio.DomainEventsEmiter;
 import br.com.carteira.dominio.DomainTests;
 import br.com.carteira.dominio.ativo.AcaoNacional;
 import br.com.carteira.dominio.ativo.Ativo;
@@ -19,6 +20,8 @@ class OrdemCompraUseCasesTest extends DomainTests {
 
     @Mock
     private OrdemCompraGateway gateway;
+    @Mock
+    private DomainEventsEmiter eventsEmiter;
     @InjectMocks
     private OrdemCompraUseCases useCases;
 

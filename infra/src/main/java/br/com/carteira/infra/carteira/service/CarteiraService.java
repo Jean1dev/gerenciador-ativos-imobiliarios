@@ -52,6 +52,11 @@ public class CarteiraService {
         this.publisher = publisher;
     }
 
+    public CarteiraDocument carteiraDefault(String usuarioRef) {
+        return carteiraRepository.findByUsuarioRef(usuarioRef)
+                .getFirst();
+    }
+
     public void consolidar(String carteiraID) {
         var carteira = CarteiraDocument.simplificadoFromDocument(carteiraRepository.findById(carteiraID).orElseThrow());
         carteira.setAtivos(ativoDosUsuariosRepository.findAllByCarteiraRef(carteiraID)
