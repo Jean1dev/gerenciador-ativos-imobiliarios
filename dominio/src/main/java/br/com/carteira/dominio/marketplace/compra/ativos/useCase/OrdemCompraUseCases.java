@@ -31,13 +31,14 @@ public class OrdemCompraUseCases {
 
         );
 
-        var possuiSaldo = ordemCompraGateway.verificarSeUsuarioPossuiSaldo(ordemCompra.getUsuarioRef(), ativo.getValorAtual());
+        var totalAGastar = ordemCompra.getQuantidade() * ativo.getValorAtual();
+        var possuiSaldo = ordemCompraGateway.verificarSeUsuarioPossuiSaldo(ordemCompra.getUsuarioRef(), totalAGastar);
         if (!possuiSaldo) {
             throw new DominioException("Usuário não possui saldo suficiente");
         }
 
         ordemCompraGateway.registrarOrdem(ordemCompra);
-        ordemCompraGateway.retirarSaldoDoUsuario(ordemCompra.getUsuarioRef(), ordemCompra.getQuantidade());
+        ordemCompraGateway.retirarSaldoDoUsuario(ordemCompra.getUsuarioRef(), totalAGastar);
         eventsEmiter.emit(ordemCompraEvent(ordemCompra));
     }
 }
