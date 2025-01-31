@@ -31,7 +31,7 @@ class OrdemCompraUseCasesTest extends DomainTests {
 
         Ativo ativo = new AcaoNacional("ativo", 10, 10, 10, 10, 10);
         when(gateway.buscarAtivo("ativo")).thenReturn(Optional.of(ativo));
-        when(gateway.verificarSeUsuarioPossuiSaldo("usuario", 10)).thenReturn(true);
+        when(gateway.verificarSeUsuarioPossuiSaldo("usuario", 10 * 10)).thenReturn(true);
 
         useCases.executarPedidoCompraAtivo(input);
 
@@ -44,7 +44,7 @@ class OrdemCompraUseCasesTest extends DomainTests {
 
         Ativo ativo = new AcaoNacional("ativo", 10, 10, 10, 10, 10);
         when(gateway.buscarAtivo("ativo")).thenReturn(Optional.of(ativo));
-        when(gateway.verificarSeUsuarioPossuiSaldo("usuario", 10)).thenReturn(false);
+        when(gateway.verificarSeUsuarioPossuiSaldo("usuario", 10 * 10)).thenReturn(false);
 
         assertThrows(DominioException.class, () -> useCases.executarPedidoCompraAtivo(input));
     }
