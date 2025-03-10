@@ -6,6 +6,7 @@ spring:
     mongodb:
       uri: ${MONGO_URL:mongodb://localhost:27017/carteira}
       auto-index-creation: true
+
 server:
   port: ${PORT:8080}
 
@@ -14,3 +15,8 @@ api:
     key: W2RC2GK1GBKGHE1V
   coinmarketmap:
     key: 7a30964b-ff11-4c1b-ad89-438e33295a3c
+
+redis:
+  host: ${REDIS_HOST}
+  port: ${REDIS_PORT:6379}
+  password: ${REDIS_PASSWORD}

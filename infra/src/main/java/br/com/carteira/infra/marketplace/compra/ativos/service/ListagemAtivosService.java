@@ -1,8 +1,10 @@
 package br.com.carteira.infra.marketplace.compra.ativos.service;
 
+import br.com.carteira.infra.ativo.mongodb.AtivoComCotacao;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacaoRepository;
 import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuarios;
 import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuariosRepository;
+import br.com.carteira.infra.ativo.service.VariacaoAtivosService;
 import br.com.carteira.infra.carteira.mongodb.CarteiraDocument;
 import br.com.carteira.infra.carteira.mongodb.CarteiraRepository;
 import br.com.carteira.infra.marketplace.compra.ativos.records.AtivoDisponivel;
@@ -24,6 +26,8 @@ public class ListagemAtivosService {
     private UsuarioService usuarioService;
     @Autowired
     private CarteiraRepository carteiraRepository;
+    @Autowired
+    private VariacaoAtivosService variacaoAtivosService;
 
     public List<AtivoDisponivel> listarDisponiveis(String user, String email) {
         if (user == null || user.isEmpty() && email == null || email.isEmpty()) {
@@ -54,15 +58,25 @@ public class ListagemAtivosService {
 
     private List<AtivoDisponivel> listarTodosAtivos() {
         return ativoComCotacaoRepository.findAll()
-                .stream().map(ativoComCotacao -> new AtivoDisponivel(
-                        ativoComCotacao.getImage(),
-                        ativoComCotacao.getTicker(),
-                        ativoComCotacao.getTicker(),
-                        true,
-                        ativoComCotacao.getValor(),
-                        0,
-                        true
-                )).toList();
+                .stream()
+                .map(this::buildAtivoDisponivelFull)
+                .toList();
+    }
+
+    private AtivoDisponivel buildAtivoDisponivelFull(AtivoComCotacao ativoComCotacao) {
+        var variacaoEntity = variacaoAtivosService.getVariacao(ativoComCotacao.getTicker());
+        boolean variacaoPositiva = variacaoEntity.percentualVariacao() > 0;
+        double variacao = variacaoEntity.percentualVariacao();
+
+        return new AtivoDisponivel(
+                ativoComCotacao.getImage(),
+                ativoComCotacao.getTicker(),
+                ativoComCotacao.getTicker(),
+                true,
+                ativoComCotacao.getValor(),
+                variacao,
+                variacaoPositiva
+        );
     }
 
 }

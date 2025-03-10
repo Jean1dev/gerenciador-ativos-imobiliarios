@@ -6,6 +6,7 @@ import br.com.carteira.infra.ativo.AtivoDosUsuariosFactory;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacao;
 import br.com.carteira.infra.ativo.mongodb.AtivoComCotacaoRepository;
 import br.com.carteira.infra.ativo.mongodb.AtivoDosUsuariosRepository;
+import br.com.carteira.infra.ativo.service.VariacaoAtivosService;
 import br.com.carteira.infra.carteira.CarteiraFactory;
 import br.com.carteira.infra.carteira.mongodb.CarteiraRepository;
 import br.com.carteira.infra.usuario.mongodb.Usuario;
@@ -40,6 +41,8 @@ class ListagemAtivosServiceTest extends E2ETests {
     private CarteiraRepository carteiraRepository;
     @Autowired
     private AtivoDosUsuariosRepository ativoDosUsuariosRepository;
+    @Autowired
+    private VariacaoAtivosService variacaoAtivosService;
 
     @DynamicPropertySource
     public static void mongoDbProperties(DynamicPropertyRegistry registry) {

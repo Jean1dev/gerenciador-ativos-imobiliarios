@@ -16,6 +16,8 @@ public final class CalcularVariacaoAtivoDuranteTimeBox {
         double variacaoAbsoluta = newValue - oldValue;
 
         double percentualVariacao = (variacaoAbsoluta / oldValue) * 100;
+        if (Double.isInfinite(percentualVariacao) || Double.isNaN(percentualVariacao))
+            percentualVariacao = 0.0;
 
         return new VariacapDePreco(diferencaDeDias, percentualVariacao);
     }
