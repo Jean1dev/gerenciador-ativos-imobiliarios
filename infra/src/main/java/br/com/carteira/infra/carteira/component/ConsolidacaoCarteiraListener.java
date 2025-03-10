@@ -1,6 +1,7 @@
 package br.com.carteira.infra.carteira.component;
 
 import br.com.carteira.dominio.ativo.AtivoComTicker;
+import br.com.carteira.dominio.ativo.TipoAtivo;
 import br.com.carteira.dominio.ativo.useCase.CalcularPorcentagemSobreOTotalUseCase;
 import br.com.carteira.dominio.ativo.useCase.CalcularValorRecomendadoUseCase;
 import br.com.carteira.dominio.carteira.Carteira;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static br.com.carteira.infra.utils.Utils.ehAcaoNacional;
 
 @Component
 @EnableAsync
@@ -103,8 +106,16 @@ public class ConsolidacaoCarteiraListener {
 
         log.info(String.format("quantidade de novas ações a ser monitoradas %s", tickersQuePrecisamSerMonitorados.size()));
         ativoComCotacaoRepository.saveAll(tickersQuePrecisamSerMonitorados.stream()
-                .map(ticker -> AtivoComCotacao.criarCotacao(ticker, null))
+                .map(ticker -> AtivoComCotacao.criarCotacao(ticker, discoverTipoAtivo(ticker)))
                 .toList());
+    }
+
+    private TipoAtivo discoverTipoAtivo(String ticker) {
+        if (ehAcaoNacional(ticker)) {
+            return TipoAtivo.ACAO_NACIONAL;
+        }
+
+        return null;
     }
 
     private void consolidarCrypto(Carteira carteira) {
