@@ -17,8 +17,10 @@ public class RedisConfig {
 
     @Bean
     public Jedis jedis(RedisProperties properties) {
-        Jedis jedis = new Jedis(properties.getHost(), properties.getPort(), true);
-        jedis.auth(properties.getPassword());
+        Jedis jedis = new Jedis(properties.getHost(), properties.getPort(), properties.getPassword() != null && !properties.getPassword().isBlank());
+        if (properties.getPassword() != null && !properties.getPassword().isBlank()) {
+            jedis.auth(properties.getPassword());
+        }
         return jedis;
     }
 }
