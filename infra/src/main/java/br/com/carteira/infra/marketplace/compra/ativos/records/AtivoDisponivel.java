@@ -1,5 +1,7 @@
 package br.com.carteira.infra.marketplace.compra.ativos.records;
 
+import br.com.carteira.dominio.ativo.TipoAtivo;
+
 public record AtivoDisponivel(
         String imgUrl,
         String nome,
@@ -7,6 +9,7 @@ public record AtivoDisponivel(
         boolean disponivel,
         double valor,
         double variacao,
-        boolean variacaoPositiva
+        boolean variacaoPositiva,
+        TipoAtivo tipoAtivo
 ) {
 }
