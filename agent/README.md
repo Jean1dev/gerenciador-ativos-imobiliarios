@@ -30,6 +30,7 @@ Copie `.env.example` para `.env` e preencha:
 | `SEARCH_PROVIDER` | Não (default: tavily) | Provedor de busca (tavily) |
 | `LOG_LEVEL` | Não (default: info) | debug, info, warn, error |
 | `OUTPUT_FILE` | Não (default: relatorio.json) | Caminho do arquivo onde o relatório JSON será gravado |
+| `RELATORIO_FILE` | Não (default: relatorio.json) | Caminho do arquivo lido pelo script de upload para a API |
 
 ## Execução
 
@@ -45,6 +46,16 @@ npm run dev
 ```
 
 O relatório é gravado em JSON no arquivo indicado por `OUTPUT_FILE` (por padrão `relatorio.json`).
+
+### Enviar relatório para a API (front-ends)
+
+Após gerar o relatório, envie-o para a API Java para disponibilizar nos front-ends:
+
+```bash
+npm run upload-relatorio
+```
+
+O script lê o arquivo em `RELATORIO_FILE` (default: `relatorio.json`) e faz POST em `{API_BASE_URL}/avaliacao-fundamentalista`. A API expõe também GET `{API_BASE_URL}/avaliacao-fundamentalista` para listar as avaliações.
 
 ## Fluxo
 
@@ -68,4 +79,6 @@ Altere `LLM_PROVIDER` e `LLM_MODEL`. Para usar outro provider (ex.: OpenAI), adi
 - `src/evaluation/analyzer.ts` – Análise fundamentalista via LLM e saída estruturada
 - `src/report/builder.ts` – Montagem do relatório final
 - `src/pipeline/orchestrator.ts` – Orquestração do fluxo
-- `src/index.ts` – Entrada e impressão do relatório
+- `src/index.ts` – Entrada e gravação do relatório em arquivo
+- `src/scripts/upload-config.ts` – Config do script de upload (API_BASE_URL, RELATORIO_FILE)
+- `src/scripts/upload-relatorio.ts` – Lê o JSON e envia POST para a API

@@ -8,6 +8,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
+    "upload-relatorio": "tsx src/scripts/upload-relatorio.ts",
     "lint": "eslint src --ext .ts"
   },
   "dependencies": {
