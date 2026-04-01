@@ -75,7 +75,8 @@ public class ListagemAtivosService {
                 true,
                 ativoComCotacao.getValor(),
                 variacao,
-                variacaoPositiva
+                variacaoPositiva,
+                ativoComCotacao.getTipoAtivo()
         );
     }
 

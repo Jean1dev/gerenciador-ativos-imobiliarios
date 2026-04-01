@@ -17,6 +17,6 @@ api:
     key: 7a30964b-ff11-4c1b-ad89-438e33295a3c
 
 redis:
-  host: ${REDIS_HOST}
+  host: ${REDIS_HOST:localhost}
   port: ${REDIS_PORT:6379}
-  password: ${REDIS_PASSWORD}
+  password: ${REDIS_PASSWORD:}
