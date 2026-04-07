@@ -75,7 +75,11 @@ public class DefaultCarteiraGateway implements CarteiraGateway {
 
     private Usuario getUsuario(Carteira carteira) {
         if (Objects.isNull(holder.getUserName()) || Objects.isNull(holder.getEmail())) {
-            return usuarioService.needUsuario(carteira.getPertenceAoUsuarioRef());
+            String usuarioRef = carteira.getPertenceAoUsuarioRef();
+            if (Objects.isNull(usuarioRef)) {
+                throw new IllegalStateException("Usuario não identificado: headers 'user' e 'email' são obrigatórios");
+            }
+            return usuarioService.needUsuario(usuarioRef);
         }
 
         return usuarioService.getUsuario(holder.getUserName(), holder.getEmail());
