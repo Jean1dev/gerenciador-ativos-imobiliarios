@@ -1,23 +1,24 @@
 package br.com.carteira.dominio.carteira.useCase;
 
+import br.com.carteira.dominio.ativo.TipoAtivo;
 import br.com.carteira.dominio.ativo.useCase.CalcularRecomendacaoAporteUseCase;
 import br.com.carteira.dominio.carteira.Carteira;
 import br.com.carteira.dominio.carteira.useCase.records.MetaComValorRecomendado;
 import br.com.carteira.dominio.carteira.useCase.records.NovoAporteOutput;
 import br.com.carteira.dominio.exception.DominioException;
+import br.com.carteira.dominio.metas.AtivoComPercentual;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static br.com.carteira.dominio.Utils.arredondamentoPadrao;
-import static br.com.carteira.dominio.Utils.seNegativoEntaoRetornaZero;
 
 public class NovoAporteUseCase {
 
     public NovoAporteOutput execute(Double valorAporte, Carteira carteira) {
-        if (valorAporte.isNaN() ||
-                valorAporte.isInfinite() ||
-                valorAporte < 0) {
+        if (valorAporte.isNaN() || valorAporte.isInfinite() || valorAporte < 0) {
             throw new DominioException("Valor do aporte nao permitido");
         }
 
@@ -36,20 +37,45 @@ public class NovoAporteUseCase {
         final var metasPercentuais = new CalcularPercentualCarteiraEmMetasUseCase().executar(carteira);
         final var pesoDaMeta = carteira.getMeta().getAtivoComPercentuals();
 
-        final var metaComValorRecomendados = pesoDaMeta.stream().map(meta -> {
-            final var ativoComPercentualETotal = metasPercentuais.get(meta.getTipoAtivo().descricao());
+        // 1. Calcula o gap (deficit) de cada classe em relação ao alvo
+        Map<TipoAtivo, Double> gapPorClasse = new HashMap<>();
+        for (AtivoComPercentual meta : pesoDaMeta) {
+            var ativoComPercentualETotal = metasPercentuais.get(meta.getTipoAtivo().descricao());
+            if (ativoComPercentualETotal == null) continue;
+            var valorIdeal = valorFinalComAporte * (meta.getPercentual() / 100);
+            var gap = valorIdeal - ativoComPercentualETotal.valor();
+            if (gap > 0) {
+                gapPorClasse.put(meta.getTipoAtivo(), gap);
+            }
+        }
 
-            final var valorRecomendado = seNegativoEntaoRetornaZero(
-                    arredondamentoPadrao((valorFinalComAporte * (meta.getPercentual() / 100)) - ativoComPercentualETotal.valor())
-            );
+        // 2. Mantém apenas classes com gap positivo que possuem ao menos um ativo elegível (nota > 0)
+        Map<TipoAtivo, Double> gapsElegiveis = gapPorClasse.entrySet().stream()
+                .filter(entry -> carteira.getAtivos().stream()
+                        .anyMatch(a -> a.getTipoAtivo().equals(entry.getKey()) && a.getNota() > 0))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-            return new MetaComValorRecomendado(meta.getTipoAtivo(), valorRecomendado);
-        }).collect(Collectors.toSet());
+        // 3. Normaliza os gaps para que a soma dos aportes por classe seja exatamente valorAporte
+        var somaGapsElegiveis = gapsElegiveis.values().stream().mapToDouble(d -> d).sum();
 
+        Map<TipoAtivo, Double> aportesPorClasse = new HashMap<>();
+        if (somaGapsElegiveis > 0) {
+            gapsElegiveis.forEach((tipoAtivo, gap) ->
+                    aportesPorClasse.put(tipoAtivo, (gap / somaGapsElegiveis) * valorAporte));
+        }
+
+        // 4. Monta o resultado por classe com o valor normalizado do aporte
+        final var metaComValorRecomendados = pesoDaMeta.stream()
+                .map(meta -> new MetaComValorRecomendado(
+                        meta.getTipoAtivo(),
+                        arredondamentoPadrao(aportesPorClasse.getOrDefault(meta.getTipoAtivo(), 0.0))
+                ))
+                .collect(Collectors.toSet());
+
+        // 5. Distribui o aporte de cada classe entre os ativos da classe, ponderado pela nota
         final var recomendacaoAporteList = new CalcularRecomendacaoAporteUseCase()
-                .calcular(valorAporte, carteira.getAtivos());
+                .calcular(aportesPorClasse, carteira.getAtivos());
 
         return new NovoAporteOutput(recomendacaoAporteList, metaComValorRecomendados);
     }
-
 }
