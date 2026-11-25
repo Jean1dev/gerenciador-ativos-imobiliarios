@@ -6,8 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A real estate / investment asset manager (gerenciador de ativos imobiliários) consisting of three modules:
 
-- **dominio** — Java 21 library: core domain logic (Clean Architecture)
-- **infra** — Java 21 Spring Boot 3.4.3 app: HTTP API, MongoDB persistence, Redis cache
+- **dominio** — Java 25 library: core domain logic (Clean Architecture)
+- **infra** — Java 25 Spring Boot 3.5.16 app: HTTP API, MongoDB persistence, Redis cache
 - **agent** — TypeScript/Node.js 20: AI-powered fundamentalist analysis pipeline using LangChain + Google Gemini
 
 ## Build & Run Commands

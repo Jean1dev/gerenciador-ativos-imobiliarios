@@ -2,7 +2,7 @@ plugins {
     id 'java-conventions'
     id 'jacoco-report-aggregation'
     id 'application'
-    id 'org.springframework.boot' version '3.5.3'
+    id 'org.springframework.boot' version '3.5.16'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -23,5 +23,5 @@ dependencies {
 
 bootJar {
     archiveFileName = 'application.jar'
-    destinationDirectory.set(file("${rootProject.buildDir}/libs"))
+    destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
 }

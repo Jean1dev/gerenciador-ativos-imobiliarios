@@ -1,14 +1,14 @@
-FROM gradle:8.5.0-jdk21-alpine AS builder
+FROM eclipse-temurin:25-jdk-alpine AS builder
 
 WORKDIR /usr/app/
 
 COPY . .
 
-RUN gradle build --exclude-task test 
+RUN chmod +x ./gradlew && ./gradlew build --exclude-task test --no-daemon
 
-FROM eclipse-temurin:21.0.3_9-jdk-alpine
+FROM eclipse-temurin:25-jre-alpine
 
-COPY --from=builder /usr/app/build/libs/*.jar /opt/app/application.jar
+COPY --from=builder /usr/app/build/libs/application.jar /opt/app/application.jar
 
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
